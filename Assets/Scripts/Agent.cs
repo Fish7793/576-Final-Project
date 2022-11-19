@@ -38,8 +38,13 @@ public class Agent : MonoBehaviour
 
     }
 
-    public void Sense()
+    public PropType Sense(Vector3 dir)
     {
-
+        return PropType.None;
     }
+}
+
+public enum PropType
+{
+    None, Wall, Enemy, Bomb, Projectile
 }
