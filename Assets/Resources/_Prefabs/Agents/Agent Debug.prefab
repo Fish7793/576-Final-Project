@@ -126,7 +126,7 @@ Transform:
   m_GameObject: {fileID: 3628153024846218740}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.5}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3628153024688333841}
@@ -205,6 +205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3628153024953111297}
   - component: {fileID: 3628153024953111296}
+  - component: {fileID: 2655461506010429315}
   m_Layer: 0
   m_Name: Agent Debug
   m_TagString: Untagged
@@ -240,3 +241,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c26c62b0261ec874c89cb61c6ad25d51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  positionTarget: {x: 0, y: 0, z: 0}
+  eulerAngleTarget: {x: 0, y: 0, z: 0}
+--- !u!114 &2655461506010429315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3628153024953111422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4195e85b15029f48a0125bc4f317ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 3628153024953111422}
