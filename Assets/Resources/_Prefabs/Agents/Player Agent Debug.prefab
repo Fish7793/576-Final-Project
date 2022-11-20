@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 3628153024953111296}
   - component: {fileID: 2655461506010429315}
   m_Layer: 0
-  m_Name: Agent Debug
+  m_Name: Player Agent Debug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -243,6 +243,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   positionTarget: {x: 0, y: 0, z: 0}
   eulerAngleTarget: {x: 0, y: 0, z: 0}
+  moveSpeed: 3
+  rotationSpeed: 2
 --- !u!114 &2655461506010429315
 MonoBehaviour:
   m_ObjectHideFlags: 0
