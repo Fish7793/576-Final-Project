@@ -10,6 +10,8 @@ public class Agent : MonoBehaviour
     public float moveSpeed = 1;
     public float rotationSpeed = 0.5f;
 
+    public System.Func<Vector3Int, bool> moveCheck;
+
     void Start()
     {
         positionTarget = transform.position.ToVector3Int();
@@ -27,7 +29,8 @@ public class Agent : MonoBehaviour
 
     public void Move()
     {
-        positionTarget += transform.forward.ToVector3Int();
+        if (moveCheck != null && moveCheck.Invoke(positionTarget + transform.forward.ToVector3Int()))
+            positionTarget += transform.forward.ToVector3Int();
     }
 
     public void Rotate(float amount)

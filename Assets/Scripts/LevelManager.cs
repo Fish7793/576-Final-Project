@@ -8,14 +8,32 @@ public class LevelManager : MonoBehaviour
     public List<Tilemap> groundLayers;
     public List<Tilemap> propLayers;
     public Dictionary<PropInfo, Tilemap> info;
+    public Dictionary<Vector3Int, GameObject> map;
     public List<GameObject> active;
 
     public BlockGraph graph = new();
     public Agent playerAgent;
 
+    void SetPlayer(GameObject obj)
+    {
+        playerAgent = obj.GetComponent<Agent>();
+        playerAgent.moveCheck = (v) =>
+        {
+            return map.ContainsKey(v - new Vector3Int(0, 1, 0));
+        };
+    }
+
     void Start()
     {
         info = new Dictionary<PropInfo, Tilemap>();
+        map = new Dictionary<Vector3Int, GameObject>();
+
+        foreach (var layer in groundLayers)
+            foreach (Transform child in layer.transform)
+            {
+                map.Add(child.position.ToVector3Int(), child.gameObject);   
+            }
+
         foreach (var prop in propLayers)
             foreach (Transform child in prop.transform)
             {
@@ -23,7 +41,7 @@ public class LevelManager : MonoBehaviour
                 active.Add(child.gameObject);
                 if (child.name.ToLower().Contains("player"))
                 {
-                    playerAgent = child.GetComponent<Agent>();
+                    SetPlayer(child.gameObject);
                 }
             }
 
@@ -85,6 +103,10 @@ public class LevelManager : MonoBehaviour
             prop.transform.position = propInfo.pos;
             prop.transform.eulerAngles = propInfo.rot;
             active.Add(prop.gameObject);
+            if (prop.name.ToLower().Contains("player"))
+            {
+                SetPlayer(prop.gameObject);
+            }
         }
     }
 }
