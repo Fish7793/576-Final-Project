@@ -14,15 +14,15 @@ public class BlockGraph
     public void Evaluate()
     {
         bool res;
+        int iter = 0;
         do
         {
             if (current == null)
                 current = start;
-
             res = current.Evaluate();
-            UnityEngine.Debug.Log(current);
             current = current?.next;
-        } while (!res);
+            iter++;
+        } while (!res && iter < 1000);
         
     }
 

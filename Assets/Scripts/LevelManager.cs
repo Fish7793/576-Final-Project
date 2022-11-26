@@ -1,18 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    public new Camera camera;
+
+    [Header("Level Stuff")]
     public List<Tilemap> groundLayers;
     public List<Tilemap> propLayers;
     public Dictionary<PropInfo, Tilemap> info;
     public Dictionary<Vector3Int, GameObject> map;
     public List<GameObject> active;
 
-    public BlockGraph graph = new();
     public Agent playerAgent;
+
+    bool running = false;
+    public bool Running { get => running; }
+
+    [Header("Block Editor Stuff")]
+    public CanvasGraph canvasGraph;
+    GameObject ghost;
+
+    public MouseData mouseData;
+    public Transform buttonRoot;
+    public GameObject buttonPrefab;
+    public List<CanvasBlock> blockPrefabs;
+    List<Button> buttons;
+    bool placing = false;
+    public static float gridScale = 60;
 
     void SetPlayer(GameObject obj)
     {
@@ -21,6 +41,57 @@ public class LevelManager : MonoBehaviour
         {
             return map.ContainsKey(v - new Vector3Int(0, 1, 0));
         };
+        canvasGraph.Agent = playerAgent;
+    }
+
+    void CreateButtons()
+    {
+        foreach (var block in blockPrefabs)
+        {
+            var button = GameObject.Instantiate(buttonPrefab, buttonRoot).GetComponent<Button>();
+            button.onClick.AddListener(() =>
+            {
+                if (!Running)
+                {
+                    Debug.Log(block.name);
+                    mouseData = new MouseData(MouseState.Placing, block.gameObject);
+                    StartPlacement();
+                }
+            });
+
+            var text = button.GetComponentInChildren<TMP_Text>();
+            text.text = block.name
+                .Replace("Prefab", "")
+                .Replace("Block", "")
+                .Trim();
+        }
+    }
+
+    void StartPlacement()
+    {
+        placing = true;
+        if (mouseData.selection != null)
+        {
+            print("Creating Ghost!");
+            ghost = GameObject.Instantiate(mouseData.selection);
+            ghost.transform.SetParent(canvasGraph.transform);
+        } 
+        else
+        {
+            mouseData = new MouseData(MouseState.None, null);
+        }
+    }
+
+    void EndPlacement()
+    {
+        Destroy(ghost);
+
+        placing = false;
+        if (mouseData.selection != null)
+        {
+            canvasGraph.AddToVisualGraph(mouseData.selection.GetComponent<CanvasBlock>(), Input.mousePosition);
+            mouseData = new MouseData(MouseState.None, null);
+        }
     }
 
     void Start()
@@ -45,35 +116,36 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-        ActionBlock block = new()
-        {
-            action = playerAgent.Move
-        };
-        graph.blocks.Add(block);
-        graph.start = block;
+        CreateButtons();
+    }
 
-        ActionBlock rotate = new()
+    private void Update()
+    {
+        if (placing)
         {
-            action = () => playerAgent.Rotate(90)
-        };
-        block.next = rotate;
-        graph.blocks.Add(rotate);
-
-        StartLevel();
+            ghost.transform.position = Input.mousePosition;
+            if (Input.GetMouseButtonDown(0))
+            {
+                EndPlacement();
+            }
+        }
     }
 
     public void StartLevel()
     {
+        running = true;
         StartCoroutine(LevelLogic());
     }
 
     public IEnumerator LevelLogic()
     {
-        while (true)
+        canvasGraph.Refresh();
+        canvasGraph.UpdateGraph();
+        while (running)
         {
             yield return new WaitForSeconds(1);
 
-            graph.Evaluate();
+            canvasGraph.graph.Evaluate();
 
             foreach (var obj in active)
             {
@@ -82,13 +154,15 @@ public class LevelManager : MonoBehaviour
                     yield return p.Step();
                 }
             }
+
+            yield return null;
         }
     }
 
     public void ResetLevel()
     {
-        StopCoroutine("LevelLogic");
-
+        running = false;
+        StopAllCoroutines();
         foreach (var gameObject in active)
             if (gameObject != null)
                 Destroy(gameObject);
@@ -99,13 +173,13 @@ public class LevelManager : MonoBehaviour
         {
             var layer = kv.Value;
             var propInfo = kv.Key;
-            var prop = Instantiate(propInfo.prefab, layer.transform);
+            var prop = Instantiate(GameManager.prefabs[propInfo.prefabName], layer.transform);
             prop.transform.position = propInfo.pos;
             prop.transform.eulerAngles = propInfo.rot;
             active.Add(prop.gameObject);
             if (prop.name.ToLower().Contains("player"))
             {
-                SetPlayer(prop.gameObject);
+                SetPlayer(prop);
             }
         }
     }
@@ -117,11 +191,33 @@ public struct PropInfo
     public Vector3Int pos;
     public Vector3 rot;
     public GameObject prefab;
+    public string prefabName;
 
     public PropInfo(Prop prop)
     {
         pos = prop.transform.position.ToVector3Int();
         rot = prop.transform.eulerAngles;
         prefab = prop.prefab;
+        prefabName = prop.prefab.name;
     }
+}
+
+[System.Serializable]
+public struct MouseData
+{
+    public bool holding;
+    public MouseState state;
+    public GameObject selection;
+
+    public MouseData(MouseState state, GameObject selection)
+    {
+        this.state = state;
+        this.selection = selection;
+        holding = selection != null;
+    }
+}
+
+public enum MouseState
+{
+    None, Placing, Selecting
 }

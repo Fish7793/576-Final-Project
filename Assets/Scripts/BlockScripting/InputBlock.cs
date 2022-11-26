@@ -8,10 +8,10 @@
             case InputType.None:
                 value = new Value(null);
                 break;
-            case InputType.SenseProp:
+            case InputType.Sense:
                 value = new Value(null);
                 break;
-            case InputType.Direction:
+            case InputType.Self:
                 value = new Value(null);
                 break;
         }
@@ -21,6 +21,20 @@
 
     public override void Reset()
     {
-        
+        value= new Value(null);
     }
 }
+
+public class SenseBlock : Block
+{
+    public override bool Evaluate()
+    {
+        return false;
+    }
+
+    public override void Reset()
+    {
+        value= new Value(null);
+    }
+}
+
