@@ -11,6 +11,7 @@ public class Agent : MonoBehaviour
     public float rotationSpeed = 0.5f;
 
     public System.Func<Vector3Int, bool> moveCheck;
+    public System.Func<Vector3Int, PropType[]> sense;
 
     void Start()
     {
@@ -58,8 +59,8 @@ public class Agent : MonoBehaviour
         Debug.Log("Using! :)");
     }
 
-    public PropType Sense(Vector3 dir)
+    public PropType[] Sense(Vector3Int localOffset)
     {
-        return PropType.None;
+        return sense(positionTarget + localOffset);
     }
 }

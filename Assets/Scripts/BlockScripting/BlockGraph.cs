@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 /** 
  *  Blocks that control logic of player agent
@@ -13,6 +14,8 @@ public class BlockGraph
 
     public void Evaluate()
     {
+        var others = blocks.Where(x => x.GetType() != typeof(ActionBlock)); 
+
         bool res;
         int iter = 0;
         do
@@ -23,7 +26,10 @@ public class BlockGraph
             current = current?.next;
             iter++;
         } while (!res && iter < 1000);
-        
+        foreach (var block in others)
+        {
+            block.Evaluate();
+        }
     }
 
     public void Reset()

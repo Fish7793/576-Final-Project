@@ -24,17 +24,3 @@
         value= new Value(null);
     }
 }
-
-public class SenseBlock : Block
-{
-    public override bool Evaluate()
-    {
-        return false;
-    }
-
-    public override void Reset()
-    {
-        value= new Value(null);
-    }
-}
-

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
@@ -40,6 +39,23 @@ public class LevelManager : MonoBehaviour
         playerAgent.moveCheck = (v) =>
         {
             return map.ContainsKey(v - new Vector3Int(0, 1, 0));
+        };
+
+        playerAgent.sense = (v) =>
+        {
+            if (map.TryGetValue(v, out GameObject obj))
+            {
+                if (obj.TryGetComponent(out Prop prop))
+                {
+                    return prop.propTags;
+                }
+                else
+                {
+                    return new PropType[] { PropType.Floor };
+                }
+            }
+
+            return new PropType[] { PropType.None };
         };
         canvasGraph.Agent = playerAgent;
     }
@@ -89,7 +105,7 @@ public class LevelManager : MonoBehaviour
         placing = false;
         if (mouseData.selection != null)
         {
-            canvasGraph.AddToVisualGraph(mouseData.selection.GetComponent<CanvasBlock>(), Input.mousePosition);
+            canvasGraph.AddToVisualGraph(mouseData.selection.GetComponent<CanvasBlock>(), Input.mousePosition, ghost.transform.eulerAngles);
             mouseData = new MouseData(MouseState.None, null);
         }
     }
@@ -123,10 +139,32 @@ public class LevelManager : MonoBehaviour
     {
         if (placing)
         {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                int mod = -1;
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    mod = 1;
+                }
+                ghost.transform.eulerAngles += new Vector3(0, 0, 90 * mod);
+            }
+
             ghost.transform.position = Input.mousePosition;
             if (Input.GetMouseButtonDown(0))
             {
                 EndPlacement();
+            } 
+            else if (Input.GetMouseButtonDown(1))
+            {
+                mouseData = new MouseData(MouseState.None, null);
+                EndPlacement();
+            }
+        } 
+        else
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                canvasGraph.RemoveFromVisualGraph(Input.mousePosition);
             }
         }
     }

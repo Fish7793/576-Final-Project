@@ -98,6 +98,11 @@ public class CanvasBlock : MonoBehaviour
             case BlockType.StartBlock: 
                 Block = new StartBlock();
                 break;
+            case BlockType.SenseBlock:
+                var b = new SenseBlock();
+                b.sense = (v) => cg.Agent.Sense(v).FirstOrDefault();
+                Block = b;
+                break;
         }
         print("Refreshing " + Block);
     }
@@ -129,7 +134,7 @@ public class CanvasBlock : MonoBehaviour
 
 public enum BlockType
 {
-    StartBlock, ActionBlock, ActionBlockContainer, BranchBlock, InputBlock, PredicateBlock
+    StartBlock, ActionBlock, ActionBlockContainer, BranchBlock, InputBlock, PredicateBlock, SenseBlock
 }
 
 public enum ActionType
