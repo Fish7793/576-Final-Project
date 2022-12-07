@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-
             LoadAllResources("_Prefabs", prefabs);
         }
     }

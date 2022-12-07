@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 4840332796242006164}
+  propTags: 03000000
 --- !u!1 &5952319851049470375
 GameObject:
   m_ObjectHideFlags: 0

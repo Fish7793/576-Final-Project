@@ -45,9 +45,6 @@ public class CanvasGraph : MonoBehaviour
     public CanvasBlockBase QueryTile(Vector3 pos)
     {
         var grd = ToGrid(transform.InverseTransformPoint(pos));
-        print("Q: " + grd);
-        foreach (var kv in blocks)
-            print("K: " + kv.Key);
         return blocks.ContainsKey(grd) ? blocks[grd] : null;    
     }
 
@@ -58,7 +55,11 @@ public class CanvasGraph : MonoBehaviour
 
     public bool AddToVisualGraph(CanvasBlockBase prefab, Vector3 pos, Vector3 eulerAngles)
     {
-        if (QueryTile(pos) == null)
+        bool add = true;
+        if (QueryTile(pos) != null)
+            add = RemoveFromVisualGraph(pos);
+
+        if (add)
         {
             var obj = GameObject.Instantiate(prefab, transform).GetComponent<CanvasBlockBase>();
             obj.transform.position = pos;
@@ -68,10 +69,8 @@ public class CanvasGraph : MonoBehaviour
             obj.Begin(this);
             blocks.Add(obj.transform.localPosition.ToVector3Int(), obj);
             UpdateGraph();
-            return true;
         }
-
-        return false;
+        return true;
     }
 
     public bool RemoveFromVisualGraph(Vector3 pos)

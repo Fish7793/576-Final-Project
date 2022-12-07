@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
@@ -15,6 +17,7 @@ public class LevelManager : MonoBehaviour
     public Dictionary<PropInfo, Tilemap> info;
     public Dictionary<Vector3Int, GameObject> map;
     public List<GameObject> active;
+    public Prop goal;
 
     public Agent playerAgent;
 
@@ -64,7 +67,24 @@ public class LevelManager : MonoBehaviour
 
             return new PropType[] { PropType.None };
         };
+
+        /**
+         * 
+         */
+        playerAgent.stoppingCondition = (agent) =>
+        {
+            return agent.positionTarget == goal.transform.position.ToVector3Int();
+        };
         canvasGraph.Agent = playerAgent;
+    }
+
+    public void Win()
+    {
+        var winPanel = GameObject.Instantiate(GameManager.prefabs["Win Canvas"]).GetComponent<WinPanel>();
+        winPanel.nextLevelButton.onClick.AddListener(() => 
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        });
     }
 
     void CreateButtons()
@@ -107,15 +127,20 @@ public class LevelManager : MonoBehaviour
 
     void EndPlacement()
     {
-        Destroy(ghost);
-
-        placing = false;
         if (mouseData.selection != null)
         {
             canvasGraph.AddToVisualGraph(mouseData.selection.GetComponent<CanvasBlockBase>(), Input.mousePosition, ghost.transform.eulerAngles);
+        }
+
+        if (!Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Destroy(ghost);
+            placing = false;
             mouseData = new MouseData(MouseState.None, null);
         }
     }
+
+
 
     void Start()
     {
@@ -131,11 +156,17 @@ public class LevelManager : MonoBehaviour
         foreach (var prop in propLayers)
             foreach (Transform child in prop.transform)
             {
-                info.Add(child.GetComponent<Prop>().GetInfo(), prop);
+                var cprop = child.GetComponent<Prop>();
+                info.Add(cprop.GetInfo(), prop);
                 active.Add(child.gameObject);
                 if (child.name.ToLower().Contains("player"))
                 {
                     SetPlayer(child.gameObject);
+                }
+
+                if (cprop.propTags.Contains(PropType.Goal))
+                {
+                    goal = cprop;
                 }
             }
 
@@ -169,7 +200,7 @@ public class LevelManager : MonoBehaviour
         } 
         else
         {
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButton(1))
             {
                 canvasGraph.RemoveFromVisualGraph(Input.mousePosition);
             }
@@ -189,6 +220,13 @@ public class LevelManager : MonoBehaviour
         while (running)
         {
             yield return new WaitForSeconds(1);
+
+            if (playerAgent.stopped)
+            {
+                if (playerAgent.positionTarget == goal.transform.position.ToVector3Int())
+                    Win();
+                break;
+            }
 
             canvasGraph.graph.Evaluate();
 
@@ -219,12 +257,18 @@ public class LevelManager : MonoBehaviour
             var layer = kv.Value;
             var propInfo = kv.Key;
             var prop = Instantiate(GameManager.prefabs[propInfo.prefabName], layer.transform);
+            print(prop);
             prop.transform.position = propInfo.pos;
             prop.transform.eulerAngles = propInfo.rot;
             active.Add(prop.gameObject);
             if (prop.name.ToLower().Contains("player"))
             {
                 SetPlayer(prop);
+            }
+
+            if (prop.TryGetComponent(out Prop cprop) && cprop.propTags.Contains(PropType.Goal))
+            {
+                goal = cprop;
             }
         }
     }
