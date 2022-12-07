@@ -5,8 +5,8 @@ using static UnityEditor.PlayerSettings;
 
 public class CanvasGraph : MonoBehaviour
 {
-    public Dictionary<Vector3Int, CanvasBlock> blocks = new();
-    public HashSet<CanvasBlock> immune = new();
+    public Dictionary<Vector3Int, CanvasBlockBase> blocks = new();
+    public HashSet<CanvasBlockBase> immune = new();
     public BlockGraph graph = new();
     public Agent Agent { get; set; }
 
@@ -14,7 +14,7 @@ public class CanvasGraph : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            var block = child.GetComponent<CanvasBlock>();
+            var block = child.GetComponent<CanvasBlockBase>();
             block.transform.localPosition = ToGrid(block.transform.localPosition);
             block.queryTile = QueryTile;
             block.Begin(this);
@@ -42,7 +42,7 @@ public class CanvasGraph : MonoBehaviour
         }
     }
 
-    public CanvasBlock QueryTile(Vector3 pos)
+    public CanvasBlockBase QueryTile(Vector3 pos)
     {
         var grd = ToGrid(transform.InverseTransformPoint(pos));
         print("Q: " + grd);
@@ -56,11 +56,11 @@ public class CanvasGraph : MonoBehaviour
         return ((Vector3)(pos / LevelManager.gridScale).ToVector3Int() * LevelManager.gridScale).ToVector3Int();
     }
 
-    public bool AddToVisualGraph(CanvasBlock prefab, Vector3 pos, Vector3 eulerAngles)
+    public bool AddToVisualGraph(CanvasBlockBase prefab, Vector3 pos, Vector3 eulerAngles)
     {
         if (QueryTile(pos) == null)
         {
-            var obj = GameObject.Instantiate(prefab, transform).GetComponent<CanvasBlock>();
+            var obj = GameObject.Instantiate(prefab, transform).GetComponent<CanvasBlockBase>();
             obj.transform.position = pos;
             obj.transform.eulerAngles = eulerAngles;
             obj.transform.localPosition = ToGrid(obj.transform.localPosition);

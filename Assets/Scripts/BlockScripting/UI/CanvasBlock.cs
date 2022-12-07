@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[Obsolete("Please use components derrived from CanvasBlockBase instead.")]
 public class CanvasBlock : MonoBehaviour
 {
     public BlockType blockType;
-    public ActionType actionType;
+    public BlockActionType actionType;
     public Block Block { get; set; }
     public List<Transform> input_nodes;
     public List<Transform> output_nodes;
@@ -63,21 +64,21 @@ public class CanvasBlock : MonoBehaviour
                 var action = new ActionBlock();
                 switch (actionType)
                 {
-                    case ActionType.None:
+                    case BlockActionType.None:
                         break;
-                    case ActionType.MoveForward:
+                    case BlockActionType.MoveForward:
                         action.action = () => cg.Agent.Move(); 
                         break;
-                    case ActionType.RotateLeft:
+                    case BlockActionType.RotateLeft:
                         action.action = () => cg.Agent.Rotate(-90);
                         break;
-                    case ActionType.RotateRight:
+                    case BlockActionType.RotateRight:
                         action.action = () => cg.Agent.Rotate(90);
                         break;
-                    case ActionType.Jump:
+                    case BlockActionType.Jump:
                         action.action = () => cg.Agent.Jump();
                         break;
-                    case ActionType.Attack:
+                    case BlockActionType.Attack:
                         action.action = () => cg.Agent.Attack();
                         break;
                 }
@@ -135,9 +136,4 @@ public class CanvasBlock : MonoBehaviour
 public enum BlockType
 {
     StartBlock, ActionBlock, ActionBlockContainer, BranchBlock, InputBlock, PredicateBlock, SenseBlock
-}
-
-public enum ActionType
-{
-    None, MoveForward, RotateLeft, RotateRight, Jump, Attack
 }

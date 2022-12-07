@@ -105,7 +105,7 @@ public class LevelManager : MonoBehaviour
         placing = false;
         if (mouseData.selection != null)
         {
-            canvasGraph.AddToVisualGraph(mouseData.selection.GetComponent<CanvasBlock>(), Input.mousePosition, ghost.transform.eulerAngles);
+            canvasGraph.AddToVisualGraph(mouseData.selection.GetComponent<CanvasBlockBase>(), Input.mousePosition, ghost.transform.eulerAngles);
             mouseData = new MouseData(MouseState.None, null);
         }
     }

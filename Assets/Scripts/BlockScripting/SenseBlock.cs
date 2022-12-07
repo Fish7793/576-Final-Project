@@ -8,7 +8,7 @@ public class SenseBlock : Block
     public override bool Evaluate()
     {
         var i = inputs.FirstOrDefault();
-        if (i != null && i.value.TryGetValue(out Vector3Int v))
+        if (i != null && i.value != null && i.value.TryGetValue(out Vector3Int v))
         {
             value = new Value(sense?.Invoke(v)); 
         }
