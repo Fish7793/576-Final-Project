@@ -16,4 +16,3 @@ public class Prop : MonoBehaviour
         return new PropInfo(this);
     }
 }
-

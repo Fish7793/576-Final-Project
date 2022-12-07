@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 /** 
  *  Blocks that control logic of player agent
@@ -22,6 +23,7 @@ public class BlockGraph
         {
             if (current == null)
                 current = start;
+            Debug.Log(current);
             res = current.Evaluate();
             current = current?.next;
             iter++;

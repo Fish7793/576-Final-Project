@@ -28,19 +28,26 @@ public class LevelManager : MonoBehaviour
     public MouseData mouseData;
     public Transform buttonRoot;
     public GameObject buttonPrefab;
-    public List<CanvasBlock> blockPrefabs;
+    public List<CanvasBlockBase> blockPrefabs;
     List<Button> buttons;
     bool placing = false;
-    public static float gridScale = 60;
+    public static float gridScale = 50;
 
     void SetPlayer(GameObject obj)
     {
         playerAgent = obj.GetComponent<Agent>();
+
+        /**
+         * 
+         */
         playerAgent.moveCheck = (v) =>
         {
             return map.ContainsKey(v - new Vector3Int(0, 1, 0));
         };
 
+        /**
+         * 
+         */
         playerAgent.sense = (v) =>
         {
             if (map.TryGetValue(v, out GameObject obj))
