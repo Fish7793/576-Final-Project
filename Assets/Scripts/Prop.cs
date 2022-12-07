@@ -4,6 +4,7 @@ using UnityEngine;
 public class Prop : MonoBehaviour
 {
     public GameObject prefab;
+    public PropType[] propTags;
 
     public IEnumerator Step()
     {
@@ -15,4 +16,3 @@ public class Prop : MonoBehaviour
         return new PropInfo(this);
     }
 }
-

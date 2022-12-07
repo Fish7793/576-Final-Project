@@ -254,7 +254,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Move
+  m_text: Sense
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -370,9 +370,9 @@ GameObject:
   - component: {fileID: 8372362751326171852}
   - component: {fileID: 8372362751326171854}
   - component: {fileID: 8372362751326171855}
-  - component: {fileID: 795093665341472432}
+  - component: {fileID: 39836689477942859}
   m_Layer: 5
-  m_Name: Block Move Prefab
+  m_Name: Block Sense
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -424,7 +424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.119204916, g: 0.5377358, b: 0, a: 1}
+  m_Color: {r: 0, g: 0.65162754, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -441,7 +441,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &795093665341472432
+--- !u!114 &39836689477942859
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -450,11 +450,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8372362751326171853}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cbdd8f46757f3a41b0acbd6f5be31af, type: 3}
+  m_Script: {fileID: 11500000, guid: 744246cd4fd9d2e4796d1be855aaf47a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   input_nodes:
   - {fileID: 1306468413992045144}
   output_nodes:
   - {fileID: 8861881341314428131}
-  actionType: 1

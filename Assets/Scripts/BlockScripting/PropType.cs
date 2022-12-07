@@ -1,4 +1,4 @@
 ﻿public enum PropType
 {
-    None, Wall, Enemy, Key, Interactable
+    None, Floor, Wall, Goal, Enemy, Key, Lock
 }
