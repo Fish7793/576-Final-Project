@@ -41,6 +41,7 @@ public class CanvasInputBlock : CanvasBlockBase
                 break;
             case BlockInputType.Float:
                 var if1 = Instantiate(GameManager.prefabs["V1Field"], fieldRoot).GetComponent<TMPro.TMP_InputField>();
+                if1.onValueChanged.AddListener((s) => if1.text = Clean(s));
                 inputField = if1;
                 break;
             case BlockInputType.Vector2:
