@@ -219,7 +219,6 @@ public class LevelManager : MonoBehaviour
         canvasGraph.UpdateGraph();
         while (running)
         {
-            yield return new WaitForSeconds(1);
 
             if (playerAgent.stopped)
             {
@@ -238,7 +237,7 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-            yield return null;
+            yield return new WaitForSeconds(2.5f);
         }
     }
 

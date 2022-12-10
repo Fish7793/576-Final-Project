@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 1883103533279199441}
+  propTags: 
 --- !u!1001 &5203919881083194452
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,7 +177,7 @@ PrefabInstance:
     - target: {fileID: 5772457274869655648, guid: 7e7a90185eeaf954594f35b89298b5e5, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 9fa7c3aa649adb5428b5ab98023bc21b, type: 2}
+      objectReference: {fileID: 2100000, guid: 46992b84e5f7b36418dbed283dc63e4c, type: 2}
     - target: {fileID: 6052281236169233364, guid: 7e7a90185eeaf954594f35b89298b5e5, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
