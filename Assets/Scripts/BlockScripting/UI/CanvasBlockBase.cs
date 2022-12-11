@@ -9,6 +9,7 @@ public abstract class CanvasBlockBase : MonoBehaviour
     public Block Block { get; set; }
     public List<Transform> input_nodes;
     public List<Transform> output_nodes;
+    public List<Vector3Int> extra_size;
 
     public Func<Vector3, CanvasBlockBase> queryTile;
 
@@ -64,6 +65,9 @@ public abstract class CanvasBlockBase : MonoBehaviour
                 action.next = Outputs.FirstOrDefault();
                 break;
             case BranchBlock branch:
+                branch.predicate = (PredicateBlock)Inputs.FirstOrDefault(
+                    (b) => b is PredicateBlock
+                );
                 branch.ifTrue = Outputs.Count() > 0 ? Outputs[0] : null;
                 branch.ifFalse = Outputs.Count() > 1 ? Outputs[1] : null;
                 break;
@@ -71,10 +75,15 @@ public abstract class CanvasBlockBase : MonoBehaviour
                 input.next = Outputs.FirstOrDefault();
                 break;
             case PredicateBlock predicate:
+                predicate.a = Inputs.Count() > 0 ? Inputs[0] : null;
+                predicate.b = Inputs.Count() > 1 ? Inputs[1] : null;
                 predicate.next = Outputs.FirstOrDefault();
                 break;
             case StartBlock start:
                 start.next = Outputs.FirstOrDefault();
+                break;
+            default:
+                Block.next = Outputs.FirstOrDefault();
                 break;
         }
     }

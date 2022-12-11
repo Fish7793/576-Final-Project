@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public static Dictionary<string, GameObject> prefabs = new();
+    public static Dictionary<string, AudioClip> sounds = new();
 
     public static void LoadAllResources<T>(string dir, Dictionary<string, T> dict) where T : Object
     {
@@ -23,8 +24,8 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-
             LoadAllResources("_Prefabs", prefabs);
+            LoadAllResources("Audio", sounds);
         }
     }
 }

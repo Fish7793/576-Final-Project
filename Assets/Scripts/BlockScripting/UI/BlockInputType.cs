@@ -1,5 +1,5 @@
 ﻿public enum BlockInputType
 {
-    None, f1, f2, f3, boolean
+    None, Float, Vector2, Vector3, Boolean, PropType
 }
 

@@ -1,11 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
 public class CanvasGraph : MonoBehaviour
 {
+    [System.Serializable]
+    public struct VCPair
+    {
+        public Vector3Int pos;
+        public CanvasBlockBase block;
+
+        public VCPair(KeyValuePair<Vector3Int, CanvasBlockBase> block)
+        {
+            pos = block.Key;
+            this.block = block.Value;
+        }
+    }
+
     public Dictionary<Vector3Int, CanvasBlockBase> blocks = new();
+    
+    [SerializeField]
+    private List<VCPair> blocksList;
+    
     public HashSet<CanvasBlockBase> immune = new();
     public BlockGraph graph = new();
     public Agent Agent { get; set; }
@@ -22,6 +40,11 @@ public class CanvasGraph : MonoBehaviour
             immune.Add(block);
             UpdateGraph();
         }
+    }
+
+    public void Update()
+    {
+        //blocksList = blocks.ToList().Select(x => new VCPair(x)).ToList();
     }
 
     public void UpdateGraph()
@@ -45,9 +68,6 @@ public class CanvasGraph : MonoBehaviour
     public CanvasBlockBase QueryTile(Vector3 pos)
     {
         var grd = ToGrid(transform.InverseTransformPoint(pos));
-        print("Q: " + grd);
-        foreach (var kv in blocks)
-            print("K: " + kv.Key);
         return blocks.ContainsKey(grd) ? blocks[grd] : null;    
     }
 
@@ -56,9 +76,27 @@ public class CanvasGraph : MonoBehaviour
         return ((Vector3)(pos / LevelManager.gridScale).ToVector3Int() * LevelManager.gridScale).ToVector3Int();
     }
 
+    public HashSet<Vector3Int> GetPlaces(CanvasBlockBase tile, Vector3Int pos)
+    {
+        HashSet<Vector3Int> places = new HashSet<Vector3Int>
+        {
+            pos
+        };
+        foreach (var v in tile.extra_size)
+            places.Add(pos + v);
+        return places;
+    }
+
     public bool AddToVisualGraph(CanvasBlockBase prefab, Vector3 pos, Vector3 eulerAngles)
     {
-        if (QueryTile(pos) == null)
+        bool add = true;
+        var lpos = ToGrid(transform.InverseTransformPoint(pos));
+        var places = GetPlaces(prefab, lpos);
+
+        if (QueryTile(pos) != null)
+            add = RemoveFromVisualGraph(pos);
+
+        if (add)
         {
             var obj = GameObject.Instantiate(prefab, transform).GetComponent<CanvasBlockBase>();
             obj.transform.position = pos;
@@ -66,12 +104,12 @@ public class CanvasGraph : MonoBehaviour
             obj.transform.localPosition = ToGrid(obj.transform.localPosition);
             obj.queryTile = QueryTile;
             obj.Begin(this);
-            blocks.Add(obj.transform.localPosition.ToVector3Int(), obj);
-            UpdateGraph();
-            return true;
-        }
+            foreach (var v in places)
+                blocks.Add(v, obj);
 
-        return false;
+            UpdateGraph();
+        }
+        return true;
     }
 
     public bool RemoveFromVisualGraph(Vector3 pos)
@@ -79,7 +117,9 @@ public class CanvasGraph : MonoBehaviour
         var tile = QueryTile(pos);
         if (tile != null && !immune.Contains(tile))
         {
-            blocks.Remove(tile.transform.localPosition.ToVector3Int());
+            var places = GetPlaces(tile, tile.transform.localPosition.ToVector3Int());
+            foreach (var v in places)
+                blocks.Remove(v);
             Destroy(tile.gameObject);
             UpdateGraph();
 
