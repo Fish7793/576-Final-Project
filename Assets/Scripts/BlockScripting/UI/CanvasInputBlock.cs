@@ -40,8 +40,8 @@ public class CanvasInputBlock : CanvasBlockBase
             case BlockInputType.None:
                 break;
             case BlockInputType.Float:
-                var if1 = Instantiate(GameManager.prefabs["V1Field"], fieldRoot).GetComponent<TMPro.TMP_InputField>();
-                if1.onValueChanged.AddListener((s) => if1.text = Clean(s));
+                var if1 = Instantiate(GameManager.prefabs["V1Field"], fieldRoot).GetComponent<V3Field>();
+                if1.transform.SetParent(fieldRoot);
                 inputField = if1;
                 break;
             case BlockInputType.Vector2:
@@ -59,6 +59,12 @@ public class CanvasInputBlock : CanvasBlockBase
                 check.transform.SetParent(fieldRoot);
                 inputField = check;
                 break;
+            case BlockInputType.PropType:
+                var prp = Instantiate(GameManager.prefabs["BPropType"], fieldRoot).GetComponent<PropTypeField>();
+                prp.transform.SetParent(fieldRoot);
+                inputField = prp;
+                break;
+
         }
     }
 
@@ -78,6 +84,9 @@ public class CanvasInputBlock : CanvasBlockBase
                     break;
                 case V3Field v3field:
                     value = v3field.Value;
+                    break;
+                case PropTypeField propTypeField:
+                    value = propTypeField.Value;
                     break;
             }
         }
