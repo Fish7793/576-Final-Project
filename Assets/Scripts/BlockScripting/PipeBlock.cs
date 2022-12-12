@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Linq;
 
-public class InputBlock : Block
+public class PipeBlock : Block
 {
     public override bool Evaluate()
     {
+        value = inputs.FirstOrDefault()?.value;
         return false;
     }
 

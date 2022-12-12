@@ -107,7 +107,9 @@ public class Agent : Prop
     public PropType[] Sense(Vector3Int localOffset)
     {
         CheckStoppingCondition();
-        return sense(positionTarget + localOffset);
+        var res = transform.forward * localOffset[0] + transform.up * localOffset[1] + transform.right * localOffset[2];
+        print(positionTarget + res.ToVector3Int());
+        return sense(positionTarget + res.ToVector3Int());
     }
 }
 

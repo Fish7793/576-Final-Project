@@ -2,7 +2,9 @@
 {
     public override void Begin(CanvasGraph cg)
     {
-        Block = new SenseBlock();
+        var sense = new SenseBlock();
+        sense.sense = (v) => cg.Agent.Sense(v);
+        Block = sense;
     }
 }
 

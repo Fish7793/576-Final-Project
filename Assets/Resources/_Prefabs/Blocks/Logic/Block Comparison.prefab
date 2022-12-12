@@ -538,8 +538,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a003bfef0d9c474d922225860834040, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  input_nodes: []
-  output_nodes: []
+  input_nodes:
+  - {fileID: 1306468413992045144}
+  - {fileID: 6933784536886978860}
+  output_nodes:
+  - {fileID: 8861881341314428131}
   extra_size:
   - {x: 50, y: 0, z: 0}
   field: {fileID: 3541418641656382664}

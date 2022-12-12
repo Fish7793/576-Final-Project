@@ -36,9 +36,9 @@ public class LevelManager : MonoBehaviour
     bool placing = false;
     public static float gridScale = 50;
 
-    void SetPlayer(GameObject obj)
+    void SetPlayer(GameObject player_object)
     {
-        playerAgent = obj.GetComponent<Agent>();
+        playerAgent = player_object.GetComponent<Agent>();
 
         /**
          * 
@@ -53,16 +53,20 @@ public class LevelManager : MonoBehaviour
          */
         playerAgent.sense = (v) =>
         {
-            if (map.TryGetValue(v, out GameObject obj))
+            var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
+            if (sensed.Count > 0)
             {
+                var obj = sensed[0];
                 if (obj.TryGetComponent(out Prop prop))
                 {
+                    print("Found " + prop);
                     return prop.propTags;
                 }
-                else
-                {
-                    return new PropType[] { PropType.Floor };
-                }
+            } 
+            else if (map.TryGetValue(v - new Vector3Int(0, 1, 0), out GameObject _))
+            {
+                print("Floor");
+                return new PropType[] { PropType.Floor };
             }
 
             return new PropType[] { PropType.None };
@@ -132,7 +136,7 @@ public class LevelManager : MonoBehaviour
             canvasGraph.AddToVisualGraph(mouseData.selection.GetComponent<CanvasBlockBase>(), Input.mousePosition, ghost.transform.eulerAngles);
         }
 
-        if (!Input.GetKeyDown(KeyCode.LeftShift))
+        if (!Input.GetKey(KeyCode.LeftShift))
         {
             Destroy(ghost);
             placing = false;
@@ -256,7 +260,6 @@ public class LevelManager : MonoBehaviour
             var layer = kv.Value;
             var propInfo = kv.Key;
             var prop = Instantiate(GameManager.prefabs[propInfo.prefabName], layer.transform);
-            print(prop);
             prop.transform.position = propInfo.pos;
             prop.transform.eulerAngles = propInfo.rot;
             active.Add(prop.gameObject);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using UnityEngine;
 
 public class Value
 {
@@ -23,12 +25,12 @@ public class Value
 
     public static bool operator >(Value a, Value b)
     {
-        var valueA = a.value;
-        var valueB = b.value;
+        var valueA = a?.value;
+        var valueB = b?.value;
 
-        if (valueA.GetType() == valueB.GetType() && valueA is IComparable ac)
+        if (valueA?.GetType() == valueB?.GetType() && valueA is IComparable ac && valueB is IComparable bc)
         {
-            return ac.CompareTo(b) > 0;
+            return ac.CompareTo(bc) > 0;
         }
 
         return false;
@@ -36,12 +38,12 @@ public class Value
 
     public static bool operator <(Value a, Value b)
     {
-        var valueA = a.value;
-        var valueB = b.value;
+        var valueA = a?.value;
+        var valueB = b?.value;
 
-        if (valueA.GetType() == valueB.GetType() && valueA is IComparable ac)
+        if (valueA?.GetType() == valueB?.GetType() && valueA is IComparable ac && valueB is IComparable bc)
         {
-            return ac.CompareTo(b) < 0;
+            return ac.CompareTo(bc) < 0;
         }
 
         return false;
@@ -49,12 +51,12 @@ public class Value
 
     public static bool operator >=(Value a, Value b)
     {
-        var valueA = a.value;
-        var valueB = b.value;
+        var valueA = a?.value;
+        var valueB = b?.value;
 
-        if (valueA.GetType() == valueB.GetType() && valueA is IComparable ac)
+        if (valueA?.GetType() == valueB?.GetType() && valueA is IComparable ac && valueB is IComparable bc)
         {
-            return ac.CompareTo(b) >= 0;
+            return ac.CompareTo(bc) >= 0;
         }
 
         return false;
@@ -62,12 +64,12 @@ public class Value
 
     public static bool operator <=(Value a, Value b)
     {
-        var valueA = a.value;
-        var valueB = b.value;
+        var valueA = a?.value;
+        var valueB = b?.value;
 
-        if (valueA.GetType() == valueB.GetType() && valueA is IComparable ac)
+        if (valueA?.GetType() == valueB?.GetType() && valueA is IComparable ac && valueB is IComparable bc)
         {
-            return ac.CompareTo(b) <= 0;
+            return ac.CompareTo(bc) <= 0;
         }
 
         return false;
@@ -75,12 +77,21 @@ public class Value
 
     public static bool operator ==(Value a, Value b)
     {
-        var valueA = a.value;
-        var valueB = b.value;
-
-        if (valueA.GetType() == valueB.GetType() && valueA is IComparable ac)
+        var valueA = a?.value;
+        var valueB = b?.value;
+        if (valueA?.GetType() == valueB?.GetType() && valueA is IComparable ac && valueB is IComparable bc)
         {
-            return ac.CompareTo(b) == 0;
+            return ac.CompareTo(bc) == 0;
+        }
+
+        if (valueA is PropType[] pla && valueB is PropType pb)
+        {
+            return pla.Contains(pb);
+        }
+
+        if (valueB is PropType[] plb && valueA is PropType pa)
+        {
+            return plb.Contains(pa);
         }
 
         return false;
@@ -88,12 +99,22 @@ public class Value
 
     public static bool operator !=(Value a, Value b)
     {
-        var valueA = a.value;
-        var valueB = b.value;
+        var valueA = a?.value;
+        var valueB = b?.value;
 
-        if (valueA.GetType() == valueB.GetType() && valueA is IComparable ac)
+        if (valueA?.GetType() == valueB?.GetType() && valueA is IComparable ac && valueB is IComparable bc)
         {
-            return ac.CompareTo(b) != 0;
+            return ac.CompareTo(bc) != 0;
+        }
+
+        if (valueA is PropType[] pla && valueB is PropType pb)
+        {
+            return !pla.Contains(pb);
+        }
+
+        if (valueB is PropType[] plb && valueA is PropType pa)
+        {
+            return !plb.Contains(pa);
         }
 
         return false;
