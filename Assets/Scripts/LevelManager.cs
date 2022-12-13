@@ -82,7 +82,7 @@ public class LevelManager : MonoBehaviour
          */
         playerAgent.stoppingCondition = (agent) =>
         {
-            return agent.positionTarget == goal.transform.position.ToVector3Int();
+            return agent.transform.position.ToVector3Int() == goal.transform.position.ToVector3Int();
         };
         canvasGraph.Agent = playerAgent;
     }

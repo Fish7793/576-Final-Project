@@ -30,5 +30,7 @@ public class ExplodeFX : MonoBehaviour
             sphereMat.SetColor("_Color", sphereColorCurve.Evaluate(i / t));
             yield return new WaitForSeconds(1 / 60f);
         }
+
+        sphere.SetActive(false);
     }
 }

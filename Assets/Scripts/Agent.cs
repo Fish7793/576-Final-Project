@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Agent : Prop
@@ -14,7 +15,11 @@ public class Agent : Prop
     public System.Func<Vector3Int, bool> isGround;
     public System.Func<Vector3Int, PropType[]> sense;
     public System.Func<Agent, bool> stoppingCondition;
+
+    public System.Action setAnimatorState;
+
     public bool stopped = false;
+    public bool updatePos = true;
 
     public AgentState state;
     public Animator animator;
@@ -25,9 +30,14 @@ public class Agent : Prop
         eulerAngleTarget = transform.eulerAngles;
     }
 
+    public virtual void SetAnimatorState()
+    {
+
+    }
+
     void Update()
     {
-        if (!stopped)
+        if (!stopped && updatePos)
         {
             var delta = positionTarget - transform.position;
             delta = new Vector3(delta.x, 0, delta.z);
@@ -38,11 +48,11 @@ public class Agent : Prop
             if (Mathf.Abs(rdelta + 180) > 2)
                 transform.eulerAngles += rotationSpeed * Time.deltaTime * new Vector3(0, rdelta, 0);
 
-            //animator.SetInteger("state", (int)state);
-            animator.SetBool("Roll_Anim", false);
-            animator.SetBool("Walk_Anim", state == AgentState.Walking);
-            animator.SetBool("Open_Anim", state != AgentState.Turning);
+            if (isGround != null && !isGround.Invoke(positionTarget))
+                gameObject.GetComponent<Rigidbody>().useGravity = true;
         }
+
+        SetAnimatorState();
     }
 
     void SetState(AgentState state)
@@ -59,8 +69,13 @@ public class Agent : Prop
 
     public void Move()
     {
+        updatePos = true;
         state = AgentState.Walking;
-        StartCoroutine(GameManager.Delay(() => SetState(AgentState.Idle), 1));
+        StartCoroutine(GameManager.Delay(() => 
+        {
+            CheckStoppingCondition();
+            SetState(AgentState.Idle); 
+        }, 1));
         if (isGround != null && !isGround.Invoke(positionTarget + transform.forward.ToVector3Int()))
             gameObject.GetComponent<Rigidbody>().useGravity = true;
 
@@ -68,7 +83,6 @@ public class Agent : Prop
         //    positionTarget += transform.forward.ToVector3Int();
 
         positionTarget += transform.forward.ToVector3Int();
-        CheckStoppingCondition();
     }
 
     public void Rotate(float amount)
@@ -76,7 +90,6 @@ public class Agent : Prop
         state = AgentState.Turning;
         StartCoroutine(GameManager.Delay(() => SetState(AgentState.Idle), 1));
         eulerAngleTarget = new Vector3(0, (eulerAngleTarget.y + amount) % 360f, 0);
-        CheckStoppingCondition();
     }
 
     public void Attack()
@@ -85,10 +98,31 @@ public class Agent : Prop
         CheckStoppingCondition();
     }
 
+    public IEnumerator IEJump()
+    {
+        for (float i = 1/60f; i < 1; i += 1 / 60f)
+        {
+            if (gameObject != null)
+            {
+                transform.position += transform.forward * 2 / 60f + transform.up * Mathf.Sin(2 * Mathf.PI * i) * 2 / 60f;
+                yield return new WaitForSeconds(1 / 60f);
+            }
+        }
+    }
+
     public void Jump()
     {
-        Debug.Log("Jumping! :O");
-        CheckStoppingCondition();
+        state = AgentState.Jumping;
+        StartCoroutine(GameManager.Delay(() => 
+        { 
+            SetState(AgentState.Idle);
+            positionTarget = transform.position.ToVector3Int();
+            updatePos = true;
+            CheckStoppingCondition();
+        }, 1));
+        StartCoroutine(IEJump());
+
+        updatePos = false;
     }
 
     public void PickUp()
@@ -122,9 +156,4 @@ public class Agent : Prop
         print(positionTarget + res.ToVector3Int());
         return sense(positionTarget + res.ToVector3Int());
     }
-}
-
-public enum AgentState
-{
-    Idle=0, Walking=1, Turning=2, Jumping=3, Attacking=4, Using=5, Dying=6, Ragdoll=7
 }
