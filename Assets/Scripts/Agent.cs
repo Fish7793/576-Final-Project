@@ -11,6 +11,7 @@ public class Agent : Prop
     public float rotationSpeed = 0.5f;
 
     public System.Func<Vector3Int, bool> moveCheck;
+    public System.Func<Vector3Int, bool> isGround;
     public System.Func<Vector3Int, PropType[]> sense;
     public System.Func<Agent, bool> stoppingCondition;
     public bool stopped = false;
@@ -26,35 +27,28 @@ public class Agent : Prop
 
     void Update()
     {
-        var delta = positionTarget - transform.position;
-        if (delta.magnitude > 0.05)
-            transform.position += delta.normalized * moveSpeed * Time.deltaTime;
+        if (!stopped)
+        {
+            var delta = positionTarget - transform.position;
+            delta = new Vector3(delta.x, 0, delta.z);
+            if (delta.magnitude > 0.05)
+                transform.position += delta.normalized * moveSpeed * Time.deltaTime;
 
-        var rdelta = Mathf.DeltaAngle(eulerAngleTarget.y - 180, transform.eulerAngles.y);
-        if (Mathf.Abs(rdelta + 180) > 2)
-            transform.eulerAngles += rotationSpeed * Time.deltaTime * new Vector3(0, rdelta, 0);
+            var rdelta = Mathf.DeltaAngle(eulerAngleTarget.y - 180, transform.eulerAngles.y);
+            if (Mathf.Abs(rdelta + 180) > 2)
+                transform.eulerAngles += rotationSpeed * Time.deltaTime * new Vector3(0, rdelta, 0);
 
-        //animator.SetInteger("state", (int)state);
-        animator.SetBool("Roll_Anim", false);
-        animator.SetBool("Walk_Anim", state == AgentState.Walking);
-        animator.SetBool("Open_Anim", state != AgentState.Turning);
-    }
-
-    IEnumerator Delay(System.Action action, float t)
-    {
-        yield return new WaitForSeconds(t);
-        action?.Invoke();
-    }
-
-    IEnumerator DelayUntil(System.Action action, System.Func<bool> condition)
-    {
-        yield return new WaitUntil(condition);
-        action?.Invoke();
+            //animator.SetInteger("state", (int)state);
+            animator.SetBool("Roll_Anim", false);
+            animator.SetBool("Walk_Anim", state == AgentState.Walking);
+            animator.SetBool("Open_Anim", state != AgentState.Turning);
+        }
     }
 
     void SetState(AgentState state)
     {
-        this.state = state;
+        if (this != null)
+            this.state = state;
     }
 
     void CheckStoppingCondition()
@@ -66,16 +60,21 @@ public class Agent : Prop
     public void Move()
     {
         state = AgentState.Walking;
-        StartCoroutine(Delay(() => SetState(AgentState.Idle), 1));
-        if (moveCheck != null && moveCheck.Invoke(positionTarget + transform.forward.ToVector3Int()))
-            positionTarget += transform.forward.ToVector3Int();
+        StartCoroutine(GameManager.Delay(() => SetState(AgentState.Idle), 1));
+        if (isGround != null && !isGround.Invoke(positionTarget + transform.forward.ToVector3Int()))
+            gameObject.GetComponent<Rigidbody>().useGravity = true;
+
+        //if (moveCheck != null && moveCheck.Invoke(positionTarget + transform.forward.ToVector3Int()))
+        //    positionTarget += transform.forward.ToVector3Int();
+
+        positionTarget += transform.forward.ToVector3Int();
         CheckStoppingCondition();
     }
 
     public void Rotate(float amount)
     {
         state = AgentState.Turning;
-        StartCoroutine(Delay(() => SetState(AgentState.Idle), 1));
+        StartCoroutine(GameManager.Delay(() => SetState(AgentState.Idle), 1));
         eulerAngleTarget = new Vector3(0, (eulerAngleTarget.y + amount) % 360f, 0);
         CheckStoppingCondition();
     }
@@ -102,6 +101,18 @@ public class Agent : Prop
     {
         Debug.Log("Using! :)");
         CheckStoppingCondition();
+    }
+
+    public void Die()
+    {
+        if (gameObject != null)
+        {
+            var i = Instantiate(GameManager.prefabs["ExplodeFX"], transform);
+            i.transform.SetParent(null);
+            i.transform.localScale = new Vector3(0.33f, 0.33f, 0.33f);
+            stopped = true;
+            Destroy(gameObject);
+        }
     }
 
     public PropType[] Sense(Vector3Int localOffset)

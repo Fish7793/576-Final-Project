@@ -48,6 +48,11 @@ public class LevelManager : MonoBehaviour
             return map.ContainsKey(v - new Vector3Int(0, 1, 0));
         };
 
+        playerAgent.isGround = (v) =>
+        {
+            return map.ContainsKey(v - new Vector3Int(0, 1, 0));
+        };
+
         /**
          * 
          */
@@ -235,7 +240,7 @@ public class LevelManager : MonoBehaviour
 
             foreach (var obj in active)
             {
-                if (obj.TryGetComponent(out Prop p))
+                if (obj != null && obj.TryGetComponent(out Prop p))
                 {
                     yield return p.Step();
                 }

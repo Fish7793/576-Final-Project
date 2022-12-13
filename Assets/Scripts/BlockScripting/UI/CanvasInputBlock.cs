@@ -28,7 +28,7 @@ public class CanvasInputBlock : CanvasBlockBase
     public static string ToNumber(string s)
     {
         var res = Regex.Match(s, "(-?\\d+(\\.\\d+)?)|(-?\\.\\d+)").Value.Trim();
-        return String.IsNullOrEmpty(res) ? "0.0" : res;
+        return String.IsNullOrEmpty(res) ? "0" : res;
     }
 
     public void UpdateInput()
