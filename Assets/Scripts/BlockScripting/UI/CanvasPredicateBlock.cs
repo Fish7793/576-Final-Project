@@ -13,6 +13,6 @@ public class CanvasPredicateBlock : CanvasBlockBase
             pred.comparison = field.Value;
         }
         Block = pred;
+        Block.value = new Value(false);
     }
 }
-

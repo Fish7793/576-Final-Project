@@ -28,4 +28,16 @@ public class GameManager : MonoBehaviour
             LoadAllResources("Audio", sounds);
         }
     }
+
+    public static IEnumerator Delay(System.Action action, float t)
+    {
+        yield return new WaitForSeconds(t);
+        action?.Invoke();
+    }
+
+    public static IEnumerator DelayUntil(System.Action action, System.Func<bool> condition)
+    {
+        yield return new WaitUntil(condition);
+        action?.Invoke();
+    }
 }

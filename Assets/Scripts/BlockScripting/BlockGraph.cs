@@ -11,14 +11,55 @@ public class BlockGraph
 {
     public Block start;
     public Block current;
-    public List<Block> blocks = new List<Block>();
+    public List<Block> blocks = new();
+    bool ordererd = false;
+    public List<Block> Order()
+    {
+        List<Block> result = new();
+        HashSet<Block> visited = new();
+        Queue<Block> front = new();
+
+        foreach (var b in blocks)
+            front.Enqueue(b);
+
+        while(front.Count > 0)
+        {
+            Block cur = front.Dequeue();
+            if (visited.Contains(cur))
+            {
+                continue;
+            }
+
+            if (cur.inputs.All(x => visited.Contains(x)) || cur.inputs.Count == 0)
+            {
+                result.Add(cur);
+                visited.Add(cur);
+            }
+            else
+            {
+                front.Enqueue(cur);
+            }
+        }
+
+        ordererd = true;
+        return result;
+    }
 
     public void Evaluate()
     {
-        var others = blocks.Where(x => x.GetType() != typeof(ActionBlock)); 
+        if (!ordererd)
+            blocks = Order();
+
+        var others = blocks.Where(x => x.GetType() != typeof(ActionBlock));
+        foreach (var block in others)
+        {
+            Debug.Log(block);
+            block.Evaluate();
+        }
 
         bool res;
         int iter = 0;
+
         do
         {
             if (current == null)
@@ -28,10 +69,6 @@ public class BlockGraph
             current = current?.next;
             iter++;
         } while (!res && iter < 1000);
-        foreach (var block in others)
-        {
-            block.Evaluate();
-        }
     }
 
     public void Reset()

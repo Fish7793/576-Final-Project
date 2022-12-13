@@ -25,9 +25,10 @@ public class CanvasInputBlock : CanvasBlockBase
         typeDropdown.AddOptions(names.ToList());
     }
 
-    public static string Clean(string s)
+    public static string ToNumber(string s)
     {
-        return Regex.Match(s, "(\\d+(\\.\\d+)?)|(\\.\\d+)").Value.Trim();
+        var res = Regex.Match(s, "(-?\\d+(\\.\\d+)?)|(-?\\.\\d+)").Value.Trim();
+        return String.IsNullOrEmpty(res) ? "0" : res;
     }
 
     public void UpdateInput()
@@ -80,7 +81,7 @@ public class CanvasInputBlock : CanvasBlockBase
                     value = toggle.isOn;
                     break;
                 case TMPro.TMP_InputField inputField:
-                    value = float.Parse(Clean(inputField.text));
+                    value = float.Parse(ToNumber(inputField.text));
                     break;
                 case V3Field v3field:
                     value = v3field.Value;

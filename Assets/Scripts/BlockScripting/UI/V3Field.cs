@@ -22,10 +22,21 @@ public class V3Field : MonoBehaviour
     public void Start()
     {
         if (xField != null)
-            xField.onValueChanged.AddListener((s) => { xField.text = CanvasInputBlock.Clean(s); });
+        {
+            xField.onValueChanged.AddListener((s) => { xField.text = CanvasInputBlock.ToNumber(s); });
+            xField.text = "0";
+        }
+
         if (yField != null)
-            yField.onValueChanged.AddListener((s) => { yField.text = CanvasInputBlock.Clean(s); });
+        {
+            yField.onValueChanged.AddListener((s) => { yField.text = CanvasInputBlock.ToNumber(s); });
+            yField.text = "0";
+        }
+
         if (zField != null)
-            zField.onValueChanged.AddListener((s) => { zField.text = CanvasInputBlock.Clean(s); });
+        {
+            zField.onValueChanged.AddListener((s) => { zField.text = CanvasInputBlock.ToNumber(s); });
+            zField.text = "0";
+        }
     }
 }

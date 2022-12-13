@@ -10,4 +10,15 @@ public static class Util
                 Mathf.RoundToInt(v.z)
             );
     }
+
+    public static string ToString2(this PropType[] p)
+    {
+        string s = "";
+        foreach (var prop in p)
+        {
+            s += string.Format("{0}, ", prop.ToString());
+        }
+
+        return s.Trim();
+    }
 }

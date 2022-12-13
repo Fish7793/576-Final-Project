@@ -15,4 +15,13 @@ public class Prop : MonoBehaviour
     {
         return new PropInfo(this);
     }
+
+    public virtual void OnTriggerEnter(Collider other)
+    {
+        if (other.name.ToLower().Contains("water"))
+        {
+            var i = Instantiate(GameManager.prefabs["SplashFX"], transform);
+            i.transform.SetParent(null);
+        }
+    }
 }
