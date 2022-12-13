@@ -64,13 +64,11 @@ public class LevelManager : MonoBehaviour
                 var obj = sensed[0];
                 if (obj.TryGetComponent(out Prop prop))
                 {
-                    print("Found " + prop);
                     return prop.propTags;
                 }
             } 
             else if (map.TryGetValue(v - new Vector3Int(0, 1, 0), out GameObject _))
             {
-                print("Floor");
                 return new PropType[] { PropType.Floor };
             }
 
