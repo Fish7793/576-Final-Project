@@ -65,9 +65,10 @@ public abstract class CanvasBlockBase : MonoBehaviour
                 action.next = Outputs.FirstOrDefault();
                 break;
             case BranchBlock branch:
-                branch.predicate = (PredicateBlock)Inputs.FirstOrDefault(
-                    (b) => b is PredicateBlock
+                branch.predicate = Inputs.FirstOrDefault(
+                    (b) => b is PredicateBlock || b is BooleanBlock
                 );
+                print(branch.predicate);
                 branch.ifTrue = Outputs.Count() > 0 ? Outputs[0] : null;
                 branch.ifFalse = Outputs.Count() > 1 ? Outputs[1] : null;
                 break;
@@ -78,6 +79,11 @@ public abstract class CanvasBlockBase : MonoBehaviour
                 predicate.a = Inputs.Count() > 0 ? Inputs[0] : null;
                 predicate.b = Inputs.Count() > 1 ? Inputs[1] : null;
                 predicate.next = Outputs.FirstOrDefault();
+                break;
+            case BooleanBlock boo:
+                boo.a = Inputs.Count() > 0 ? Inputs[0] : null;
+                boo.b = Inputs.Count() > 1 ? Inputs[1] : null;
+                boo.next = Outputs.FirstOrDefault();
                 break;
             case StartBlock start:
                 start.next = Outputs.FirstOrDefault();

@@ -1,6 +1,6 @@
 ﻿public class BranchBlock : Block
 {
-    public PredicateBlock predicate;
+    public Block predicate;
     public Block ifTrue;
     public Block ifFalse;
 
