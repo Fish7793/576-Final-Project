@@ -15,6 +15,7 @@ public class BlockGraph
     bool ordererd = false;
     public List<Block> Order()
     {
+        Debug.Log("Sorting graph execution!");
         List<Block> result = new();
         HashSet<Block> visited = new();
         Queue<Block> front = new();
@@ -22,7 +23,8 @@ public class BlockGraph
         foreach (var b in blocks)
             front.Enqueue(b);
 
-        while(front.Count > 0)
+        int attempts = 0;
+        while(front.Count > 0 && attempts < 1000)
         {
             Block cur = front.Dequeue();
             if (visited.Contains(cur))
@@ -38,10 +40,12 @@ public class BlockGraph
             else
             {
                 front.Enqueue(cur);
+                attempts++;
             }
         }
 
         ordererd = true;
+        Debug.Log(string.Format("Execution sorted in {0} attempts!", attempts));
         return result;
     }
 

@@ -1,5 +1,5 @@
 ﻿
-using UnityEngine.UI;
+using System;
 
 public class CanvasPredicateBlock : CanvasBlockBase
 {

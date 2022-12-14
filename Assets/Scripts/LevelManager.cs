@@ -31,8 +31,7 @@ public class LevelManager : MonoBehaviour
     public MouseData mouseData;
     public Transform buttonRoot;
     public GameObject buttonPrefab;
-    public List<CanvasBlockBase> blockPrefabs;
-    List<Button> buttons;
+    public List<CanvasBlockFolderData> blockFolders;
     bool placing = false;
     public static float gridScale = 50;
 
@@ -94,30 +93,16 @@ public class LevelManager : MonoBehaviour
         });
     }
 
-    void CreateButtons()
+    void CreateFolders()
     {
-        foreach (var block in blockPrefabs)
+        foreach (var folder in blockFolders)
         {
-            var button = GameObject.Instantiate(buttonPrefab, buttonRoot).GetComponent<Button>();
-            button.onClick.AddListener(() =>
-            {
-                if (!Running)
-                {
-                    Debug.Log(block.name);
-                    mouseData = new MouseData(MouseState.Placing, block.gameObject);
-                    StartPlacement();
-                }
-            });
-
-            var text = button.GetComponentInChildren<TMP_Text>();
-            text.text = block.name
-                .Replace("Prefab", "")
-                .Replace("Block", "")
-                .Trim();
+            var f = GameObject.Instantiate(GameManager.prefabs["Folder Prefab"], buttonRoot).GetComponent<CanvasBlockFolder>();
+            f.Begin(this, folder);
         }
     }
 
-    void StartPlacement()
+    public void StartPlacement()
     {
         placing = true;
         if (mouseData.selection != null)
@@ -132,7 +117,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    void EndPlacement()
+    public void EndPlacement()
     {
         if (mouseData.selection != null)
         {
@@ -146,8 +131,6 @@ public class LevelManager : MonoBehaviour
             mouseData = new MouseData(MouseState.None, null);
         }
     }
-
-
 
     void Start()
     {
@@ -177,39 +160,75 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-        CreateButtons();
+        CreateFolders();
     }
 
     private void Update()
     {
-        if (placing)
+        if (!running)
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (placing)
             {
-                int mod = -1;
-                if (Input.GetKey(KeyCode.LeftShift))
+                if (Input.GetKeyDown(KeyCode.R))
                 {
-                    mod = 1;
+                    int mod = -1;
+                    if (Input.GetKey(KeyCode.LeftShift))
+                    {
+                        mod = 1;
+                    }
+                    ghost.transform.eulerAngles += new Vector3(0, 0, 90 * mod);
                 }
-                ghost.transform.eulerAngles += new Vector3(0, 0, 90 * mod);
-            }
 
-            ghost.transform.position = Input.mousePosition;
-            if (Input.GetMouseButtonDown(0))
-            {
-                EndPlacement();
-            } 
-            else if (Input.GetMouseButtonDown(1))
-            {
-                mouseData = new MouseData(MouseState.None, null);
-                EndPlacement();
+                ghost.transform.position = Input.mousePosition;
+                if (Input.GetMouseButtonDown(0))
+                {
+                    EndPlacement();
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    mouseData = new MouseData(MouseState.None, null);
+                    EndPlacement();
+                }
             }
-        } 
-        else
-        {
-            if (Input.GetMouseButton(1))
+            else
             {
-                canvasGraph.RemoveFromVisualGraph(Input.mousePosition);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    var tile = canvasGraph.QueryTile(Input.mousePosition);
+                    if (tile != null)
+                    {
+                        mouseData = new MouseData(
+                            MouseState.Placing, 
+                            GameManager.prefabs.Where(
+                                x => x.Value.name.Contains(tile.name.Replace("(Clone)", "").Trim())
+                                  && x.Value.TryGetComponent(tile.GetType(), out _)
+                            ).FirstOrDefault().Value
+                        );
+                        canvasGraph.RemoveFromVisualGraph(Input.mousePosition);
+                        StartPlacement();
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    var tile = canvasGraph.QueryTile(Input.mousePosition);
+                    if (tile != null)
+                    {
+                        mouseData = new MouseData(
+                            MouseState.Placing,
+                            GameManager.prefabs.Where(
+                                x => x.Value.name.Contains(tile.name.Replace("(Clone)", "").Trim())
+                                  && x.Value.TryGetComponent(tile.GetType(), out _)
+                            ).FirstOrDefault().Value
+                        );
+                        StartPlacement();
+                    }
+                }
+
+                if (Input.GetMouseButton(1))
+                {
+                    canvasGraph.RemoveFromVisualGraph(Input.mousePosition);
+                }
             }
         }
     }

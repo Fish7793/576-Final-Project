@@ -504,7 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 0.5019608}
+  m_Color: {r: 0.1254902, g: 0.1254902, b: 0.1254902, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -581,7 +581,7 @@ GameObject:
   - component: {fileID: 2504224197388084617}
   - component: {fileID: 2504224197388084614}
   m_Layer: 5
-  m_Name: Component Panel
+  m_Name: Component Dummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -622,7 +622,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2504224197388084612}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -802,6 +802,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 573ded0b6691e164b884cd083970476d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blocksList: []
 --- !u!1 &2504224197510787762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1579,7 +1580,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8372362751326171852, guid: 85cedae5df3469947b37642b6eaeb768, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -100
       objectReference: {fileID: 0}
     - target: {fileID: 8372362751326171852, guid: 85cedae5df3469947b37642b6eaeb768, type: 3}
       propertyPath: m_AnchoredPosition.y
