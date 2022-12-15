@@ -35,27 +35,18 @@ public class LevelManager : MonoBehaviour
     bool placing = false;
     public static float gridScale = 50;
 
-    void SetPlayer(GameObject player_object)
+    void SetAgent(Agent a)
     {
-        playerAgent = player_object.GetComponent<Agent>();
-
-        /**
-         * 
-         */
-        playerAgent.moveCheck = (v) =>
+        a.moveCheck = (v) =>
+        {
+            var sensed = active.FirstOrDefault(x => x.transform.position.ToVector3Int() == v);
+            return sensed == null || (sensed != null && sensed.TryGetComponent(out Prop p) && !p.propTags.Contains(PropType.Wall));
+        };
+        a.isGround = (v) =>
         {
             return map.ContainsKey(v - new Vector3Int(0, 1, 0));
         };
-
-        playerAgent.isGround = (v) =>
-        {
-            return map.ContainsKey(v - new Vector3Int(0, 1, 0));
-        };
-
-        /**
-         * 
-         */
-        playerAgent.sense = (v) =>
+        a.sense = (v) =>
         {
             var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
             if (sensed.Count > 0)
@@ -65,7 +56,7 @@ public class LevelManager : MonoBehaviour
                 {
                     return prop.propTags;
                 }
-            } 
+            }
             else if (map.TryGetValue(v - new Vector3Int(0, 1, 0), out GameObject _))
             {
                 return new PropType[] { PropType.Floor };
@@ -73,15 +64,39 @@ public class LevelManager : MonoBehaviour
 
             return new PropType[] { PropType.None };
         };
+    }
 
-        /**
-         * 
-         */
+    void SetPlayer(GameObject player_object)
+    {
+        playerAgent = player_object.GetComponent<Agent>();
+        SetAgent(playerAgent);
         playerAgent.stoppingCondition = (agent) =>
         {
             return agent.transform.position.ToVector3Int() == goal.transform.position.ToVector3Int();
         };
         canvasGraph.Agent = playerAgent;
+    }
+
+    void SetEnemy(GameObject enemy_object)
+    {
+        var e = enemy_object.GetComponent<EnemyAgent>();
+        SetAgent(e);
+        e.getPlayer = () => playerAgent;
+        e.pathCost = (v) =>
+        {
+            var cost = 1;
+            if (!map.ContainsKey(v - new Vector3Int(0, 1, 0)))
+            {
+                cost += 1000;
+            }
+
+            var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
+            if (sensed.Count > 0)
+            {
+
+            }
+            return cost;
+        };
     }
 
     public void Win()
@@ -130,37 +145,6 @@ public class LevelManager : MonoBehaviour
             placing = false;
             mouseData = new MouseData(MouseState.None, null);
         }
-    }
-
-    void Start()
-    {
-        info = new Dictionary<PropInfo, Tilemap>();
-        map = new Dictionary<Vector3Int, GameObject>();
-
-        foreach (var layer in groundLayers)
-            foreach (Transform child in layer.transform)
-            {
-                map.Add(child.position.ToVector3Int(), child.gameObject);   
-            }
-
-        foreach (var prop in propLayers)
-            foreach (Transform child in prop.transform)
-            {
-                var cprop = child.GetComponent<Prop>();
-                info.Add(cprop.GetInfo(), prop);
-                active.Add(child.gameObject);
-                if (child.name.ToLower().Contains("player"))
-                {
-                    SetPlayer(child.gameObject);
-                }
-
-                if (cprop.propTags.Contains(PropType.Goal))
-                {
-                    goal = cprop;
-                }
-            }
-
-        CreateFolders();
     }
 
     private void Update()
@@ -259,12 +243,48 @@ public class LevelManager : MonoBehaviour
             {
                 if (obj != null && obj.TryGetComponent(out Prop p))
                 {
-                    yield return p.Step();
+                    p.Step();
                 }
             }
 
             yield return new WaitForSeconds(2.5f);
         }
+    }
+
+    void Start()
+    {
+        info = new Dictionary<PropInfo, Tilemap>();
+        map = new Dictionary<Vector3Int, GameObject>();
+
+        foreach (var layer in groundLayers)
+            foreach (Transform child in layer.transform)
+            {
+                map.Add(child.position.ToVector3Int(), child.gameObject);
+            }
+
+        foreach (var prop in propLayers)
+            foreach (Transform child in prop.transform)
+            {
+                var cprop = child.GetComponent<Prop>();
+                info.Add(cprop.GetInfo(), prop);
+                active.Add(child.gameObject);
+                if (child.name.ToLower().Contains("player"))
+                {
+                    SetPlayer(child.gameObject);
+                }
+
+                if (cprop.propTags.Contains(PropType.Goal))
+                {
+                    goal = cprop;
+                }
+
+                if (cprop is EnemyAgent e)
+                {
+                    SetEnemy(e.gameObject);
+                }
+            }
+
+        CreateFolders();
     }
 
     public void ResetLevel()
@@ -284,7 +304,7 @@ public class LevelManager : MonoBehaviour
             var prop = Instantiate(GameManager.prefabs[propInfo.prefabName], layer.transform);
             prop.transform.position = propInfo.pos;
             prop.transform.eulerAngles = propInfo.rot;
-            active.Add(prop.gameObject);
+            active.Add(prop);
             if (prop.name.ToLower().Contains("player"))
             {
                 SetPlayer(prop);
@@ -293,6 +313,11 @@ public class LevelManager : MonoBehaviour
             if (prop.TryGetComponent(out Prop cprop) && cprop.propTags.Contains(PropType.Goal))
             {
                 goal = cprop;
+            }
+
+            if (cprop is EnemyAgent e)
+            {
+                SetEnemy(e.gameObject);
             }
         }
     }

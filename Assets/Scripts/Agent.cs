@@ -77,12 +77,19 @@ public class Agent : Prop
             SetState(AgentState.Idle); 
         }, 1));
         if (isGround != null && !isGround.Invoke(positionTarget + transform.forward.ToVector3Int()))
+        {
+            GameManager.instance.StartCoroutine(GameManager.Delay(() => Die(), 2));
             gameObject.GetComponent<Rigidbody>().useGravity = true;
+        }
 
         //if (moveCheck != null && moveCheck.Invoke(positionTarget + transform.forward.ToVector3Int()))
         //    positionTarget += transform.forward.ToVector3Int();
 
-        positionTarget += transform.forward.ToVector3Int();
+        if (moveCheck != null && moveCheck.Invoke(positionTarget + transform.forward.ToVector3Int()))
+        {
+            state = AgentState.Walking;
+            positionTarget += transform.forward.ToVector3Int();
+        }
     }
 
     public void Rotate(float amount)
