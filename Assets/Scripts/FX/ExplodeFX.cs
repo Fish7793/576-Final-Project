@@ -15,6 +15,12 @@ public class ExplodeFX : MonoBehaviour
 
     void Start()
     {
+        var sfx = transform.position.y < -0.15 ? "explosion2" : "explosion1";
+        var src = AudioManager.Play(GameManager.sounds[sfx], pitch: (Random.value * 2 - 1) / 10 + 1);
+        src.transform.SetParent(transform);
+        src.transform.localPosition = Vector3.zero;
+        src.spatialBlend = 0.5f;
+        src.volume = 0.8f;
         sphereMat = sphere.GetComponent<Renderer>().material;
         var ps = GetComponentInChildren<ParticleSystem>();
         ps.Emit(count);

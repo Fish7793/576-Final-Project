@@ -101,6 +101,7 @@ public class LevelManager : MonoBehaviour
 
     public void Win()
     {
+        AudioManager.Play(GameManager.sounds["win"]);
         var winPanel = GameObject.Instantiate(GameManager.prefabs["Win Canvas"]).GetComponent<WinPanel>();
         winPanel.nextLevelButton.onClick.AddListener(() => 
         {
@@ -219,8 +220,13 @@ public class LevelManager : MonoBehaviour
 
     public void StartLevel()
     {
-        running = true;
-        StartCoroutine(LevelLogic());
+        if (!running)
+        {
+            AudioManager.Play(GameManager.sounds["menu_accept"], 0.8f);
+
+            running = true;
+            StartCoroutine(LevelLogic());
+        }
     }
 
     public IEnumerator LevelLogic()
@@ -229,14 +235,6 @@ public class LevelManager : MonoBehaviour
         canvasGraph.UpdateGraph();
         while (running)
         {
-
-            if (playerAgent.stopped)
-            {
-                if (playerAgent.positionTarget == goal.transform.position.ToVector3Int())
-                    Win();
-                break;
-            }
-
             canvasGraph.graph.Evaluate();
 
             foreach (var obj in active)
@@ -248,6 +246,13 @@ public class LevelManager : MonoBehaviour
             }
 
             yield return new WaitForSeconds(2.5f);
+            
+            if (playerAgent.stopped)
+            {
+                if (playerAgent.positionTarget == goal.transform.position.ToVector3Int())
+                    Win();
+                break;
+            }
         }
     }
 
@@ -289,6 +294,7 @@ public class LevelManager : MonoBehaviour
 
     public void ResetLevel()
     {
+        AudioManager.Play(GameManager.sounds["reset"], 0.75f);
         running = false;
         StopAllCoroutines();
         foreach (var gameObject in active)

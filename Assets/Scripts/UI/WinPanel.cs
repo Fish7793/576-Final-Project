@@ -12,11 +12,15 @@ public class WinPanel : MonoBehaviour
 
     public void Quit()
     {
+        DontDestroyOnLoad(AudioManager.Play(GameManager.sounds["menu_back"], 0.8f));
+
         SceneManager.LoadScene("Title Screen");
     }
 
     public void Close()
     {
+        AudioManager.Play(GameManager.sounds["menu_back"], 0.8f);
+
         Destroy(gameObject);
     }
 }
