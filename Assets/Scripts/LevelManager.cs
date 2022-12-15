@@ -132,37 +132,6 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        info = new Dictionary<PropInfo, Tilemap>();
-        map = new Dictionary<Vector3Int, GameObject>();
-
-        foreach (var layer in groundLayers)
-            foreach (Transform child in layer.transform)
-            {
-                map.Add(child.position.ToVector3Int(), child.gameObject);   
-            }
-
-        foreach (var prop in propLayers)
-            foreach (Transform child in prop.transform)
-            {
-                var cprop = child.GetComponent<Prop>();
-                info.Add(cprop.GetInfo(), prop);
-                active.Add(child.gameObject);
-                if (child.name.ToLower().Contains("player"))
-                {
-                    SetPlayer(child.gameObject);
-                }
-
-                if (cprop.propTags.Contains(PropType.Goal))
-                {
-                    goal = cprop;
-                }
-            }
-
-        CreateFolders();
-    }
-
     private void Update()
     {
         if (!running)
@@ -259,12 +228,63 @@ public class LevelManager : MonoBehaviour
             {
                 if (obj != null && obj.TryGetComponent(out Prop p))
                 {
-                    yield return p.Step();
+                    p.Step();
                 }
             }
 
             yield return new WaitForSeconds(2.5f);
         }
+    }
+
+    void Start()
+    {
+        info = new Dictionary<PropInfo, Tilemap>();
+        map = new Dictionary<Vector3Int, GameObject>();
+
+        foreach (var layer in groundLayers)
+            foreach (Transform child in layer.transform)
+            {
+                map.Add(child.position.ToVector3Int(), child.gameObject);
+            }
+
+        foreach (var prop in propLayers)
+            foreach (Transform child in prop.transform)
+            {
+                var cprop = child.GetComponent<Prop>();
+                info.Add(cprop.GetInfo(), prop);
+                active.Add(child.gameObject);
+                if (child.name.ToLower().Contains("player"))
+                {
+                    SetPlayer(child.gameObject);
+                }
+
+                if (cprop.propTags.Contains(PropType.Goal))
+                {
+                    goal = cprop;
+                }
+
+                if (cprop is EnemyAgent e)
+                {
+                    e.getPlayer = () => playerAgent.transform.position.ToVector3Int();
+                    e.pathCost = (v) =>
+                    {
+                        var cost = 1;
+                        if (!map.ContainsKey(v - new Vector3Int(0, 1, 0)))
+                        {
+                            cost += 1000;
+                        }
+
+                        var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
+                        if (sensed.Count > 0)
+                        {
+
+                        }
+                        return cost;
+                    };
+                }
+            }
+
+        CreateFolders();
     }
 
     public void ResetLevel()
@@ -284,7 +304,7 @@ public class LevelManager : MonoBehaviour
             var prop = Instantiate(GameManager.prefabs[propInfo.prefabName], layer.transform);
             prop.transform.position = propInfo.pos;
             prop.transform.eulerAngles = propInfo.rot;
-            active.Add(prop.gameObject);
+            active.Add(prop);
             if (prop.name.ToLower().Contains("player"))
             {
                 SetPlayer(prop);
@@ -293,6 +313,26 @@ public class LevelManager : MonoBehaviour
             if (prop.TryGetComponent(out Prop cprop) && cprop.propTags.Contains(PropType.Goal))
             {
                 goal = cprop;
+            }
+
+            if (cprop is EnemyAgent e)
+            {
+                e.getPlayer = () => playerAgent.transform.position.ToVector3Int();
+                e.pathCost = (v) =>
+                {
+                    var cost = 1;
+                    if (!map.ContainsKey(v - new Vector3Int(0, 1, 0)))
+                    {
+                        cost += 1000;
+                    }
+
+                    var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
+                    if (sensed.Count > 0)
+                    {
+
+                    }
+                    return cost;
+                };
             }
         }
     }

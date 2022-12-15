@@ -6,9 +6,9 @@ public class Prop : MonoBehaviour
     public GameObject prefab;
     public PropType[] propTags;
 
-    public virtual IEnumerator Step()
+    public virtual void Step()
     {
-        yield return null;
+
     }
 
     public virtual PropInfo GetInfo()
