@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnemyAgent : Agent
 {
-    public Func<Vector3Int> getPlayer;
+    public Func<Agent> getPlayer;
     public Func<Vector3Int, float> pathCost;
     public float explosionForce = 2;
 
@@ -76,28 +76,32 @@ public class EnemyAgent : Agent
         return new List<Vector3Int>();
     }
 
-    List<Vector3Int> path;
+    List<Vector3Int> path = new();
     public override void Step()
     {
-        path = AStar(transform.position.ToVector3Int(), 
-                        (Vector3Int)getPlayer?.Invoke(), 
-                        (v) => (getPlayer?.Invoke() - transform.position).Value.sqrMagnitude
-                    );
-
-        if (path.Count > 0)
+        var player = getPlayer?.Invoke();
+        if (player != null && !player.stopped)
         {
-            var delta = path.First() - transform.position.ToVector3Int();
-            var sum = (positionTarget + transform.forward).ToVector3Int();
-            print(String.Format("{0}, {1}", path.First(), sum));
-            if (sum == path.First())
-                Move();
-            else
+            path = AStar(transform.position.ToVector3Int(),
+                            player.transform.position.ToVector3Int(),
+                            (v) => (player.transform.position.ToVector3Int() - transform.position).sqrMagnitude
+                        );
+            
+            if (path.Count > 0)
             {
-                var lsum = (positionTarget + transform.right).ToVector3Int();
-                if (lsum == path.First())
-                    Rotate(90);
+                var delta = path.First() - transform.position.ToVector3Int();
+                var sum = (positionTarget + transform.forward).ToVector3Int();
+                print(String.Format("{0}, {1}", path.First(), sum));
+                if (sum == path.First())
+                    Move();
                 else
-                    Rotate(-90);
+                {
+                    var lsum = (positionTarget + transform.right).ToVector3Int();
+                    if (lsum == path.First())
+                        Rotate(90);
+                    else
+                        Rotate(-90);
+                }
             }
         }
     }
@@ -113,6 +117,8 @@ public class EnemyAgent : Agent
     public override void SetAnimatorState()
     {
         animator.SetBool("walk", state == AgentState.Walking);
+        animator.SetBool("turn_left", state == AgentState.Turning && Mathf.DeltaAngle(transform.eulerAngles.y, eulerAngleTarget.y) > 0);
+        animator.SetBool("turn_right", state == AgentState.Turning && Mathf.DeltaAngle(transform.eulerAngles.y, eulerAngleTarget.y) < 0);
     }
     public void OnCollisionEnter(Collision collision)
     {

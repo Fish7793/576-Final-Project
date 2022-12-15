@@ -35,27 +35,18 @@ public class LevelManager : MonoBehaviour
     bool placing = false;
     public static float gridScale = 50;
 
-    void SetPlayer(GameObject player_object)
+    void SetAgent(Agent a)
     {
-        playerAgent = player_object.GetComponent<Agent>();
-
-        /**
-         * 
-         */
-        playerAgent.moveCheck = (v) =>
+        a.moveCheck = (v) =>
+        {
+            var sensed = active.FirstOrDefault(x => x.transform.position.ToVector3Int() == v);
+            return sensed == null || (sensed != null && sensed.TryGetComponent(out Prop p) && !p.propTags.Contains(PropType.Wall));
+        };
+        a.isGround = (v) =>
         {
             return map.ContainsKey(v - new Vector3Int(0, 1, 0));
         };
-
-        playerAgent.isGround = (v) =>
-        {
-            return map.ContainsKey(v - new Vector3Int(0, 1, 0));
-        };
-
-        /**
-         * 
-         */
-        playerAgent.sense = (v) =>
+        a.sense = (v) =>
         {
             var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
             if (sensed.Count > 0)
@@ -65,7 +56,7 @@ public class LevelManager : MonoBehaviour
                 {
                     return prop.propTags;
                 }
-            } 
+            }
             else if (map.TryGetValue(v - new Vector3Int(0, 1, 0), out GameObject _))
             {
                 return new PropType[] { PropType.Floor };
@@ -73,15 +64,39 @@ public class LevelManager : MonoBehaviour
 
             return new PropType[] { PropType.None };
         };
+    }
 
-        /**
-         * 
-         */
+    void SetPlayer(GameObject player_object)
+    {
+        playerAgent = player_object.GetComponent<Agent>();
+        SetAgent(playerAgent);
         playerAgent.stoppingCondition = (agent) =>
         {
             return agent.transform.position.ToVector3Int() == goal.transform.position.ToVector3Int();
         };
         canvasGraph.Agent = playerAgent;
+    }
+
+    void SetEnemy(GameObject enemy_object)
+    {
+        var e = enemy_object.GetComponent<EnemyAgent>();
+        SetAgent(e);
+        e.getPlayer = () => playerAgent;
+        e.pathCost = (v) =>
+        {
+            var cost = 1;
+            if (!map.ContainsKey(v - new Vector3Int(0, 1, 0)))
+            {
+                cost += 1000;
+            }
+
+            var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
+            if (sensed.Count > 0)
+            {
+
+            }
+            return cost;
+        };
     }
 
     public void Win()
@@ -265,22 +280,7 @@ public class LevelManager : MonoBehaviour
 
                 if (cprop is EnemyAgent e)
                 {
-                    e.getPlayer = () => playerAgent.transform.position.ToVector3Int();
-                    e.pathCost = (v) =>
-                    {
-                        var cost = 1;
-                        if (!map.ContainsKey(v - new Vector3Int(0, 1, 0)))
-                        {
-                            cost += 1000;
-                        }
-
-                        var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
-                        if (sensed.Count > 0)
-                        {
-
-                        }
-                        return cost;
-                    };
+                    SetEnemy(e.gameObject);
                 }
             }
 
@@ -317,22 +317,7 @@ public class LevelManager : MonoBehaviour
 
             if (cprop is EnemyAgent e)
             {
-                e.getPlayer = () => playerAgent.transform.position.ToVector3Int();
-                e.pathCost = (v) =>
-                {
-                    var cost = 1;
-                    if (!map.ContainsKey(v - new Vector3Int(0, 1, 0)))
-                    {
-                        cost += 1000;
-                    }
-
-                    var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
-                    if (sensed.Count > 0)
-                    {
-
-                    }
-                    return cost;
-                };
+                SetEnemy(e.gameObject);
             }
         }
     }
