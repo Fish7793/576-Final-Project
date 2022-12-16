@@ -29,6 +29,7 @@ public class CanvasBlockFolder : MonoBehaviour
             var button = Instantiate(GameManager.prefabs["Component Button Prefab"], contentRoot).GetComponent<Button>();
             button.onClick.AddListener(() =>
             {
+                GameManager.instance.PlayMenuSelect();
                 if (!levelManager.Running)
                 {
                     Debug.Log(block.name);
@@ -45,12 +46,16 @@ public class CanvasBlockFolder : MonoBehaviour
         {
             if (x)
             {
+                GameManager.instance.PlayMenuSelect();
+
                 toggleImage.transform.localScale = new Vector3(1, -1, 1);
                 contentRoot.sizeDelta = new Vector2(0, blockPrefabs.Count * 25 + 12);
                 rt.sizeDelta = new Vector2(60, blockPrefabs.Count * 25 + 12 + 30 + 20 + 2);
             }
             else
             {
+                AudioManager.Play(GameManager.sounds["menu_back"], 1f);
+
                 toggleImage.transform.localScale = Vector3.one;
                 contentRoot.sizeDelta = new Vector2(0, 0);
                 rt.sizeDelta = new Vector2(60, 30 + 20 + 2);

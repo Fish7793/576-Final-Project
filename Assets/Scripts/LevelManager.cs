@@ -167,10 +167,14 @@ public class LevelManager : MonoBehaviour
                 ghost.transform.position = Input.mousePosition;
                 if (Input.GetMouseButtonDown(0))
                 {
+                    GameManager.instance.PlayMenuSelect();
+
                     EndPlacement();
                 }
                 else if (Input.GetMouseButtonDown(1))
                 {
+                    AudioManager.Play(GameManager.sounds["menu_back"], 1f);
+
                     mouseData = new MouseData(MouseState.None, null);
                     EndPlacement();
                 }
@@ -182,6 +186,8 @@ public class LevelManager : MonoBehaviour
                     var tile = canvasGraph.QueryTile(Input.mousePosition);
                     if (tile != null)
                     {
+                        AudioManager.Play(GameManager.sounds["menu_back"], 1f);
+
                         mouseData = new MouseData(
                             MouseState.Placing, 
                             GameManager.prefabs.Where(
@@ -196,6 +202,8 @@ public class LevelManager : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.Q))
                 {
+                    GameManager.instance.PlayMenuSelect();
+
                     var tile = canvasGraph.QueryTile(Input.mousePosition);
                     if (tile != null)
                     {
@@ -212,7 +220,8 @@ public class LevelManager : MonoBehaviour
 
                 if (Input.GetMouseButton(1))
                 {
-                    canvasGraph.RemoveFromVisualGraph(Input.mousePosition);
+                    if (canvasGraph.RemoveFromVisualGraph(Input.mousePosition))
+                        AudioManager.Play(GameManager.sounds["menu_back"], 1f);
                 }
             }
         }

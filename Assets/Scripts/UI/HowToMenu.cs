@@ -16,6 +16,7 @@ public class HowToMenu : MonoBehaviour
         foreach (Transform t in contentRoot)
             Destroy(t.gameObject);
         GameObject.Instantiate(info.items[index], contentRoot);
+        GameManager.instance.PlayMenuSelect();
     }
 
     public void Next()

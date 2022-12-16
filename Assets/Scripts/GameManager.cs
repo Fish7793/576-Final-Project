@@ -37,6 +37,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void PlayMenuSelect()
+    {
+        GameObject.DontDestroyOnLoad(AudioManager.Play(GameManager.sounds["menu_generic"], 1f));
+    }
+
     IEnumerator FadeIn(float t)
     {
         for (float i = 0; i < t; i+= 1/60f)
