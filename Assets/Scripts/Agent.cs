@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[System.Serializable]
+public struct AudioSequenceData
+{
+    public float volume;
+    public float pitch;
+    public float time;
+}
+
 public class Agent : Prop
 {
     public Vector3Int positionTarget;
@@ -24,10 +32,21 @@ public class Agent : Prop
     public AgentState state;
     public Animator animator;
 
+    public AudioClip walkClip;
+    public List<AudioSequenceData> walkClipData;
+    public AudioClip jumpClip;
+    public List<AudioSequenceData> jumpClipData;
+    public AudioClip turnClip;
+    public List<AudioSequenceData> turnClipData;
+    public AudioClip startClip;
+    public List<AudioSequenceData> startClipData;
+
     void Start()
     {
         positionTarget = transform.position.ToVector3Int();
         eulerAngleTarget = transform.eulerAngles;
+
+        StartCoroutine(AudioManager.PlaySequence(startClip, startClipData));
     }
 
     public virtual void SetAnimatorState()
@@ -53,6 +72,8 @@ public class Agent : Prop
         }
 
         SetAnimatorState();
+        if (stopped || transform.position.y < -0.15f)
+            StopAllCoroutines();
     }
 
     void SetState(AgentState state)
@@ -87,6 +108,14 @@ public class Agent : Prop
 
         if (moveCheck != null && moveCheck.Invoke(positionTarget + transform.forward.ToVector3Int()))
         {
+            StartCoroutine(AudioManager.PlaySequence(walkClip, walkClipData));
+            //if (src != null)
+            //{
+            //    src.transform.SetParent(transform);
+            //    src.transform.localPosition = Vector3.zero;
+            //    src.spatialBlend = 0.5f;
+            //}
+
             state = AgentState.Walking;
             positionTarget += transform.forward.ToVector3Int();
         }
@@ -97,6 +126,7 @@ public class Agent : Prop
         state = AgentState.Turning;
         StartCoroutine(GameManager.Delay(() => SetState(AgentState.Idle), 1));
         eulerAngleTarget = new Vector3(0, (eulerAngleTarget.y + amount) % 360f, 0);
+        StartCoroutine(AudioManager.PlaySequence(turnClip, turnClipData));
     }
 
     public void Attack()
@@ -107,6 +137,7 @@ public class Agent : Prop
 
     public IEnumerator IEJump()
     {
+        StartCoroutine(AudioManager.PlaySequence(jumpClip, jumpClipData));
         for (float i = 1/60f; i < 1; i += 1 / 60f)
         {
             if (gameObject != null)
@@ -114,6 +145,13 @@ public class Agent : Prop
                 transform.position += transform.forward * 2 / 60f + transform.up * Mathf.Sin(2 * Mathf.PI * i) * 2 / 60f;
                 yield return new WaitForSeconds(1 / 60f);
             }
+        }
+
+        //
+        if (isGround != null && !isGround.Invoke(positionTarget))
+        {
+            GameManager.instance.StartCoroutine(GameManager.Delay(() => Die(), 1));
+            gameObject.GetComponent<Rigidbody>().useGravity = true;
         }
     }
 
@@ -146,14 +184,14 @@ public class Agent : Prop
 
     public void Die()
     {
-        if (gameObject != null)
-        {
-            var i = Instantiate(GameManager.prefabs["ExplodeFX"], transform);
-            i.transform.SetParent(null);
-            i.transform.localScale = new Vector3(0.33f, 0.33f, 0.33f);
-            stopped = true;
-            Destroy(gameObject);
-        }
+        if (this == null)
+            return;
+
+        var i = Instantiate(GameManager.prefabs["ExplodeFX"], transform);
+        i.transform.SetParent(null);
+        i.transform.localScale = new Vector3(0.33f, 0.33f, 0.33f);
+        stopped = true;
+        Destroy(gameObject);
     }
 
     public PropType[] Sense(Vector3Int localOffset)

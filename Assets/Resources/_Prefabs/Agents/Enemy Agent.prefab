@@ -57,6 +57,56 @@ MonoBehaviour:
   updatePos: 1
   state: 0
   animator: {fileID: 2165525756476559540}
+  walkClip: {fileID: 8300000, guid: cb0f9530720a664499a8e36b6fc00592, type: 3}
+  walkClipData:
+  - volume: 0.5
+    pitch: 1.05
+    time: 0
+  - volume: 0.5
+    pitch: 0.95
+    time: 0.15
+  - volume: 0.5
+    pitch: 0.97
+    time: 0.15
+  - volume: 0.5
+    pitch: 1.025
+    time: 0.15
+  - volume: 0.5
+    pitch: 1
+    time: 0.15
+  - volume: 0.5
+    pitch: 1.05
+    time: 0.15
+  - volume: 0.5
+    pitch: 0.97
+    time: 0.15
+  jumpClip: {fileID: 8300000, guid: cb0f9530720a664499a8e36b6fc00592, type: 3}
+  jumpClipData:
+  - volume: 0.5
+    pitch: 1
+    time: 0
+  - volume: 0.5
+    pitch: 0.9
+    time: 0.05
+  turnClip: {fileID: 8300000, guid: cb0f9530720a664499a8e36b6fc00592, type: 3}
+  turnClipData:
+  - volume: 0.5
+    pitch: 1.025
+    time: 0
+  - volume: 0.5
+    pitch: 0.975
+    time: 0.1
+  - volume: 0.5
+    pitch: 1
+    time: 0.1
+  - volume: 0.5
+    pitch: 0.9875
+    time: 0.1
+  startClip: {fileID: 0}
+  startClipData:
+  - volume: 0.25
+    pitch: 0.25
+    time: 0
   explosionForce: 5
 --- !u!136 &3938584920939331364
 CapsuleCollider:
