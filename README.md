@@ -117,29 +117,32 @@ Scripts/UI/WinPanel.cs
 
 ##### Scenes:
 Scenes/Title Screen.unity
+
 Scenes/Thank You.unity
+
 Scenes/Levels/Template.unity
+
 
 
 #### Adira Cohen:
 Helped design game alongside creation and implementation of levels
 
 ##### Scenes:
-Scenes/Levels/Level 1
+Scenes/Levels/Level 1.unity
 
-Scenes/Levels/Level 2
+Scenes/Levels/Level 2.unity
 
-Scenes/Levels/Level 3
+Scenes/Levels/Level 3.unity
 
-Scenes/Levels/Level 4
+Scenes/Levels/Level 4.unity
 
-Scenes/Levels/Level 5
+Scenes/Levels/Level 5.unity
 
-Scenes/Levels/Level 6
+Scenes/Levels/Level 6.unity
 
-Scenes/Levels/Level 7
+Scenes/Levels/Level 7.unity
 
-Scenes/Levels/Level 8
+Scenes/Levels/Level 8.unity
 
 
 
