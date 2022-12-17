@@ -43,28 +43,31 @@ public class EnemyAgent : Agent
         cost.Add(start, 0);
 
         int attempts = 0;
-        while (front.Count > 0 && attempts < 2000)
+        while (front.Count > 0 && attempts < 512)
         {
             var curKv = front.First();
             front.RemoveAt(0);
-            var cur = curKv.Value;
+            Vector3Int cur = curKv.Value;
             if (cur == goal)
             {
                 return reconstruct();
             }
 
-            foreach (var v in GetNextVectors(cur))
+            foreach (Vector3Int v in GetNextVectors(cur))
             {
-                var vCost = cost[cur] + (float)pathCost?.Invoke(v);
+                float vCost = cost[cur] + (float)pathCost?.Invoke(v);
                 if (!cost.ContainsKey(v) || vCost < cost[v])
                 {
                     parents[v] = cur;
                     cost[v] = vCost;
                     if (front.ContainsValue(v))
                         front.RemoveAt(front.IndexOfValue(v));
-                    var temp = vCost + h(v);
-                    while (front.ContainsKey(temp))
+                    float temp = vCost + h(v);
+                    int at2 = 0;
+                    while (front.ContainsKey(temp) && at2++ < 1000)
+                    {
                         temp += UnityEngine.Random.value / 1000f;
+                    }
                     front.Add(temp, v);
                 }
             }
