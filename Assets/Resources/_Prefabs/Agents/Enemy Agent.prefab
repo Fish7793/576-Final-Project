@@ -51,7 +51,7 @@ MonoBehaviour:
   propTags: 04000000
   positionTarget: {x: 0, y: 0, z: 0}
   eulerAngleTarget: {x: 0, y: 0, z: 0}
-  moveSpeed: 1
+  moveSpeed: 1.2
   rotationSpeed: 1.5
   stopped: 0
   updatePos: 1
@@ -121,7 +121,7 @@ CapsuleCollider:
   m_Radius: 0.25
   m_Height: 0.25
   m_Direction: 1
-  m_Center: {x: 0, y: -0.22, z: 0}
+  m_Center: {x: 0, y: -0.25, z: 0}
 --- !u!54 &112138168443716250
 Rigidbody:
   m_ObjectHideFlags: 0
