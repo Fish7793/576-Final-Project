@@ -6,8 +6,7 @@ public class Mine : Prop
     public float explosionForce = 2;
     public void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent(out Agent a)
-         && a.propTags.Contains(PropType.Player))
+        if (collision.gameObject.TryGetComponent(out Agent a))
         {
             Explode();
             a.stopped = true;
