@@ -126,24 +126,26 @@ Scenes/Levels/Template.unity
 
 #### Adira Cohen:
 Helped design game alongside creation and implementation of levels. Helped find many bugs in the code.
+Added tutorial information to levels.
 
 ##### Scenes:
-Scenes/Levels/Level 1.unity
+Scenes/Levels/Level1.unity
 
-Scenes/Levels/Level 2.unity
+Scenes/Levels/Level2.unity
 
-Scenes/Levels/Level 3.unity
+Scenes/Levels/Level3.unity
 
-Scenes/Levels/Level 4.unity
+Scenes/Levels/Level4.unity
 
-Scenes/Levels/Level 5.unity
+Scenes/Levels/Level5.unity
 
-Scenes/Levels/Level 6.unity
+Scenes/Levels/Level6.unity
 
-Scenes/Levels/Level 7.unity
+Scenes/Levels/Level7.unity
 
-Scenes/Levels/Level 8.unity
+Scenes/Levels/Level8.unity
 
+Scenes/Levels/Level9.unity
 
 
 #### Lenin Perdomo Lopez:
