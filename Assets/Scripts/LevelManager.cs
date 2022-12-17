@@ -229,6 +229,11 @@ public class LevelManager : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            Win();
+        }
     }
 
     public void StartLevel()
