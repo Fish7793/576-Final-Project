@@ -4727,6 +4727,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level Camera Root
       objectReference: {fileID: 0}
+    - target: {fileID: 6517126356645502951, guid: c739f48f23341ca4dbae4e00dc62f11c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6517126356645502951, guid: c739f48f23341ca4dbae4e00dc62f11c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6517126356645502951, guid: c739f48f23341ca4dbae4e00dc62f11c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -18
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6517126356645502949, guid: c739f48f23341ca4dbae4e00dc62f11c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c739f48f23341ca4dbae4e00dc62f11c, type: 3}
