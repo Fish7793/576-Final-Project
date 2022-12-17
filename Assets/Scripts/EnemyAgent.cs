@@ -93,7 +93,10 @@ public class EnemyAgent : Agent
                 var sum = (positionTarget + transform.forward).ToVector3Int();
                 print(String.Format("{0}, {1}", path.First(), sum));
                 if (sum == path.First())
-                    Move();
+                {
+                    if (isGround != null && isGround.Invoke(path.First()))
+                        Move();
+                }
                 else
                 {
                     var lsum = (positionTarget + transform.right).ToVector3Int();
