@@ -125,7 +125,7 @@ Scenes/Levels/Template.unity
 
 
 #### Adira Cohen:
-Helped design game alongside creation and implementation of levels
+Helped design game alongside creation and implementation of levels. Helped find many bugs in the code.
 
 ##### Scenes:
 Scenes/Levels/Level 1.unity
