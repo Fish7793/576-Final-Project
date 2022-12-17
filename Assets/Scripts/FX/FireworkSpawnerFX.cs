@@ -15,7 +15,7 @@ public class FireworkSpawnerFX : MonoBehaviour
         while (true)
         {
             var r = Random.insideUnitCircle;
-            Instantiate(fireworkPrefab).transform.position = new Vector3(r.x, 1, r.y) * Random.value * 3;
+            Instantiate(fireworkPrefab).transform.position = new Vector3(r.x, 1, r.y) * 5;
             yield return new WaitForSeconds(0.2f + Random.value / 4);
         }
     }

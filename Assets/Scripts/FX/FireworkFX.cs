@@ -29,7 +29,7 @@ public class FireworkFX : MonoBehaviour
 
     public IEnumerator Routine()
     {
-        yield return new WaitForSeconds(0.25f + Random.value / 2);
+        yield return new WaitForSeconds(0.4f + Random.value / 2);
         ps.Emit(50);
         tr.enabled = false;
         Destroy(gameObject, 2);
