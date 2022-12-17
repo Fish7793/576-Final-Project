@@ -84,16 +84,20 @@ public class LevelManager : MonoBehaviour
         e.getPlayer = () => playerAgent;
         e.pathCost = (v) =>
         {
-            var cost = 1;
+            float cost = 0.1f;
             if (!map.ContainsKey(v - new Vector3Int(0, 1, 0)))
             {
-                cost += 1000;
+                cost += 1000f;
             }
 
             var sensed = active.Where(x => x.transform.position.ToVector3Int() == v).ToList();
             if (sensed.Count > 0)
             {
-
+                if (sensed.First().TryGetComponent(out Prop prop))
+                {
+                    if (prop.propTags.Contains(PropType.Wall))
+                        cost += 10f;
+                }
             }
             return cost;
         };
