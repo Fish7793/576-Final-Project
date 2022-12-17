@@ -20,6 +20,7 @@ public class FireworkFX : MonoBehaviour
 
         tr.material = mat_instace;
         rb.AddForce(new Vector3(Random.value * 2 - 1, 0.75f + Random.value / 2, Random.value * 2 - 1) * forceMulti, ForceMode.Impulse);
+        rb.AddTorque(new Vector3(0, Random.value * 2 - 1, 0) * 100, ForceMode.Impulse);
 
         ps.GetComponent<ParticleSystemRenderer>().material = mat_instace;
         ps.GetComponent<ParticleSystemRenderer>().trailMaterial = mat_instace;
