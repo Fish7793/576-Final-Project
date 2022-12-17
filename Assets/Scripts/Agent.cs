@@ -138,15 +138,16 @@ public class Agent : Prop
     public IEnumerator IEJump()
     {
         StartCoroutine(AudioManager.PlaySequence(jumpClip, jumpClipData));
-        for (float i = 1/60f; i < 1; i += 1 / 60f)
+        var start = transform.position;
+        for (float i = Time.fixedDeltaTime; i < 1; i += Time.fixedDeltaTime)
         {
             if (gameObject != null)
             {
-                transform.position += transform.forward * 2 / 60f + transform.up * Mathf.Sin(2 * Mathf.PI * i) * 2 / 60f;
-                yield return new WaitForSeconds(1 / 60f);
+                transform.position += transform.forward * 2 * Time.fixedDeltaTime + transform.up * Mathf.Sin(1.9f * Mathf.PI * i) * 2.2f * Time.fixedDeltaTime;
+                yield return new WaitForFixedUpdate();
             }
         }
-
+        transform.position = start + transform.forward * 2;
         //
         if (isGround != null && !isGround.Invoke(positionTarget))
         {
